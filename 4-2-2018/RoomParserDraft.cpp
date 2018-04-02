@@ -156,7 +156,6 @@ public:
 		//clone function for the RoomList class, copies info from right side to left
 	void clone(RoomList room)
 	{
-		
 		this->capacity = room.capacity;
 		this->regionName = room.regionName;
 		this->roomName = room.roomName;
@@ -171,13 +170,19 @@ public:
 		}
 		
 	}
+	void cloneNoArray(RoomList room)
+	{
+		this->capacity = room.capacity;
+		this->regionName = room.regionName;
+		this->roomName = room.roomName;
+	}
 
 };
 
 		//prototypes live here
 void changeToLowerCase(string &line);											//takes in a string and returns the string in lower case
-string splitLine(string &line, char dlim);									//takes in a string and delimiter then splits the line
-void parseFile(string roomArray[100][17], RoomList roomlist[98]);		//parses the input file and stores it into the arrays
+string splitLine(string &line, char dlim);										//takes in a string and delimiter then splits the line
+void parseFile(string roomArray[100][17], RoomList roomlist[98]);				//parses the input file and stores it into the arrays
 int convertToNumber(string toConvert);											//takes in a string and returns the integer number
 
 
@@ -191,14 +196,14 @@ int main()
 	string roomArray[100][17];
 	parseFile(roomArray, roomlist);
 	
-	for (int i = 0; i < 100; i++)
-	{
-		for (int j = 0; j < 17; j++)
-		{
-			cout << roomArray[i][j] << " ";
-		}
-		cout << endl;
-	}
+	//for (int i = 0; i < 100; i++)
+	//{
+	//	for (int j = 0; j < 17; j++)
+	//	{
+	//		cout << roomArray[i][j] << " ";
+	//	}
+	//	cout << endl;
+	//}
 
 	cout << endl << endl;
 	int row = 98;
@@ -234,7 +239,7 @@ void parseFile(string roomArray[100][17], RoomList roomlist[98])
 	string column;															//holds the string info for the comma deliminated parts
 	string line;															//holds the full string
 
-	if (fin.is_open())													//checks to see if the file opens
+	if (fin.is_open())											//checks to see if the file opens
 	{
 		int row = 0;														//int value for the row or y
 		int index = 0;														//int value for the index or x
@@ -243,10 +248,10 @@ void parseFile(string roomArray[100][17], RoomList roomlist[98])
 
 		while (getline(fin, line, '\n') && row < 100)			//while the file still another line to get
 		{	
-			changeToLowerCase(line);									//conver to lower case for ease of use
-			while (!line.empty() && index <= 17)					//while the there is something in the line and only 17 commas are found
+			changeToLowerCase(line);										//conver to lower case for ease of use
+			while (!line.empty() && index <= 17)							//while the there is something in the line and only 17 commas are found
 			{
-				if ((index == 15) && row != 0)						//if the 15th location is found and its not in the title row
+				if ((index == 15) && row != 0)					//if the 15th location is found and its not in the title row
 				{
 					breakLoc = 0;											
 					while (((line[breakLoc + 1] != 'f') && (line[breakLoc] != ',')) || isdigit(line[breakLoc + 1]))	//looking ,f in the file for stopping point
@@ -256,13 +261,10 @@ void parseFile(string roomArray[100][17], RoomList roomlist[98])
 
 					column = line.substr(0, breakLoc);
 					line = line.substr(breakLoc + 1);
-					roomArray[row][index] = column;					//sets information in a 2d array
+					roomArray[row][index] = column;							//sets information in a 2d array
 
 				}
-				else
-				{
-																				//not the 15th location continue using the standard delimiter
-				}
+				else											//not the 15th location continue using the standard delimiter
 				{
 					column = splitLine(line, ',');
 					roomArray[row][index] = column;
@@ -278,16 +280,6 @@ void parseFile(string roomArray[100][17], RoomList roomlist[98])
 	{
 		cout << "Error occured while trying to open file..." << endl;
 	}
-
-	for (int j = 0; j < 100; j++)										//start putting things in the data structure
-	{
-		newRoom.setroomName(roomArray[j][6]);
-		newRoom.setCap(convertToNumber(roomArray[j][14]));
-		newRoom.setRegionName(roomArray[j][16]);
-
-		//newRoom.setbRoomFeatures();
-		roomlist[j].clone(newRoom);
-	}
 }
 
 /********************************************************************
@@ -297,8 +289,8 @@ void parse15(string line, int row, string roomArray[100][17], RoomList room[98] 
 {
 	string part;									//a part of the full string
 	string temp;									//temperary holder of the comparison string
-	std::size_t delim = line.find(';');		//the location of the ; character in the string line
-	std::size_t comma = line.find(',');		//the location of the , character in the string line
+	std::size_t delim = line.find(';');				//the location of the ; character in the string line
+	std::size_t comma = line.find(',');				//the location of the , character in the string line
 
 	string checker[AMAX]							//temp array for comparison reasons
 		= { "Computer - Instructor","DVD Player", "LCD Overhead Projector", "Power Point Clicker", "Screen", "Phone - Star",
@@ -307,14 +299,14 @@ void parse15(string line, int row, string roomArray[100][17], RoomList room[98] 
 		"Document Camera", "Flip Chart", "Changing Room", "Restroom",	"Piano", "3D Printer", "Imaging Lab", "Printmaking",
 		"Painting and Drawing Lab", "Sink", "Laptop", "Exam Table", "Human Cadavers in Refrigeration Units", "Refrigerator","Microscope", "Map(s)" };
 
-	while (delim != string::npos)															//while there are still ;'s in the string
+	while (delim != string::npos)												//while there are still ;'s in the string
 	{
 		delim = line.find(';');																//the location of the ; character in the string
 		part = line.substr(0, delim);														//cuts the line in two at the first ; character found first portion returned
-		line = line.substr(delim + 1);													//cuts the line in two at the first ; character found second portion returned
+		line = line.substr(delim + 1);														//cuts the line in two at the first ; character found second portion returned
 		comma = part.find(',');																//finds a comma in the part of the string
 
-		for (int i = 0; i < AMAX; i++)													//looping through the checker array
+		for (int i = 0; i < AMAX; i++)											//looping through the checker array
 		{
 			temp = checker[i];																//temp value to hold checker string
 			changeToLowerCase(temp);														//converts to lower case for ease of use
@@ -325,17 +317,34 @@ void parse15(string line, int row, string roomArray[100][17], RoomList room[98] 
 			}
 			if ((comma != string::npos) && (isdigit(part[part.size()-1])))		//checking for a digit in the string at the last location
 			{
-				if (isdigit(part[part.size() - 2]))										//checking for a double 
+				if (isdigit(part[part.size() - 2]))											//checking for a double 
 				{
 					part = part.substr(part.size() - 2);
 				}
-				else																				//single digit found
+				else															//single digit found
 				{
 					part = part.substr(part.size() - 1);
 				}
-				room[row].setqRoomSingle(i, convertToNumber(part));				//sets the number found into the parrelel arrays
+				room[row].setqRoomSingle(i, convertToNumber(part));							//sets the number found into the parrelel arrays
 			}
 		}
+	}
+}
+
+/********************************************************************************
+ *fillDataStructure - uses the 2d temp array to fill the RoomList data structure*
+ ********************************************************************************/
+void fillDataStructure(string line, int row, string roomArray[100][17], RoomList rooms[98])
+{
+	RoomList newRoom;
+	for (int j = 1; j < 100; j++)										//start putting things in the data structure
+	{
+		newRoom.setroomName(roomArray[j][6]);
+		newRoom.setCap(convertToNumber(roomArray[j][14]));
+		newRoom.setRegionName(roomArray[j][16]);
+
+		//newRoom.setbRoomFeatures();
+		rooms[j].clone(newRoom);
 	}
 }
 
@@ -400,6 +409,6 @@ int convertToNumber(string toConvert)
 
 
 /*----------------------------------------------------------------------------------------------*\
- |	Problems: dealing with a type mismatch between a const string and string							|
- |				 odd memory leaks that have no buisness being in this program at all						|
+ |	Problems: dealing with a type mismatch between a const string and string					|
+ |				 odd memory leaks that have no buisness being in this program at all			|
 \*----------------------------------------------------------------------------------------------*/
