@@ -59,14 +59,24 @@ void parseFile(string file) {
             master[ENDTIME][i] = toMilitary(master[ENDTIME][i]);
         }
         writeToMaster(file);
-    }
+	}
 
 }
 
 
 int main()
 {
+    // First delete error data so we can re-evaluate the errors Branson Camp
+    ofstream deletefile;
+    deletefile.open("error.txt", std::ofstream::out | std::ofstream::trunc); // This deletes contents of error.txt
+    deletefile.close();
+    // Do the same for the master file
+    deletefile.open("master-test.csv", std::ofstream::out | std::ofstream::trunc); // This deletes contents of error.txt
+    deletefile.close();
+
+    // Now add any files you want here
     parseFile("imperfect/com.csv");
+    parseFile("imperfect/bus.csv");
     return 0;
 }
 
@@ -126,12 +136,14 @@ int determineIndexes(string file )   //passed in file as parameter LG
         }
     }
 
+    ofstream errorfile;
+    errorfile.open("error.txt");
     // diagnostics - alert user if headers are missing
     for (int i = 0; i < COLS; i++) {
         int index = indexes[i];
         //cout << index << endl;
         if (index == 99) {
-            cout << "Header '" << ORDER[i] << "' is missing. Make sure to rename it to the correct header name" << endl;
+            errorfile << "[" << file << "]: Header '" << ORDER[i] << "' is missing. Make sure to rename it to the correct header name" << endl;
             goodHeaders = 1;
         }
     }
@@ -259,10 +271,8 @@ void writeToMaster(string file)
 {
     ofstream fout;      //first outfile that will be the "master file"
     ofstream fout2;     //second outfile that keeps track of errors
-    fout.open ("master-test.csv");
-    fout2.open("error.txt"); // changed it to error.txt because it's not a csv file
-    fout2<<"Please fix the following errors: "<<endl;
-    fout2<<"In the file: " << file <<endl;
+    fout.open ("master-test.csv", std::ios_base::app);
+    fout2.open("error.txt", std::ios_base::app); // changed it to error.txt because it's not a csv file
     for (int row = 0; row < MAX; row++)
     {
         for (int col = 0; col < COLS; col++)
@@ -286,12 +296,11 @@ void writeToMaster(string file)
                 }
                 else
                 {
-                    fout2<< "\ton row " <<row << " there is missing data "<<endl;   //outputs that there was an error in the row in the second file LG
+					fout2 << "[" << file << "]: Missing data in row " << row << endl;
                     row++;
                 }
             }
         }
-
     }
 
     fout2.close();

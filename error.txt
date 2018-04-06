@@ -1,6 +1,5 @@
-Please fix the following errors: 
-In the file: imperfect/com.csv
-	on row 10 there is missing data 
-	on row 17 there is missing data 
-	on row 19 there is missing data 
-	on row 21 there is missing data 
+[imperfect/bus.csv]: Missing data in row 9
+[imperfect/bus.csv]: Missing data in row 12
+[imperfect/bus.csv]: Missing data in row 14
+[imperfect/bus.csv]: Missing data in row 15
+[imperfect/bus.csv]: Missing data in row 16
