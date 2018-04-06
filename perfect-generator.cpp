@@ -39,12 +39,11 @@ void fillArray (string file );
 void initalizeMasterArray ();
 int determineIndexes(string file);
 void findBlanks();
+void parseFile(string filename);
 
-
-int main()
-{
-
-    string file = "imperfect/com.csv";
+// Branson Camp
+// This allows the program to go through multiple files
+void parseFile(string file) {
     initalizeMasterArray();
     //printMaster(); // This should be empty
     int goodHeaders = determineIndexes(file);
@@ -60,20 +59,14 @@ int main()
             master[ENDTIME][i] = toMilitary(master[ENDTIME][i]);
         }
         writeToMaster(file);
-
     }
 
+}
 
 
-
-
-
-
-
-
-
-    //---------------------------------Last Step(?) - write to master file------------------------
-
+int main()
+{
+    parseFile("imperfect/com.csv");
     return 0;
 }
 
@@ -267,7 +260,7 @@ void writeToMaster(string file)
     ofstream fout;      //first outfile that will be the "master file"
     ofstream fout2;     //second outfile that keeps track of errors
     fout.open ("master-test.csv");
-    fout2.open("error.csv");
+    fout2.open("error.txt"); // changed it to error.txt because it's not a csv file
     fout2<<"Please fix the following errors: "<<endl;
     fout2<<"In the file: " << file <<endl;
     for (int row = 0; row < MAX; row++)
@@ -293,7 +286,8 @@ void writeToMaster(string file)
                 }
                 else
                 {
-                    fout2<< "on row " <<row << " there is missing data "<<endl;   //outputs that there was an error in the row in the second file LG
+                    fout2<< "\ton row " <<row << " there is missing data "<<endl;   //outputs that there was an error in the row in the second file LG
+                    row++;
                 }
             }
         }
@@ -338,3 +332,4 @@ void findBlanks()
 }
 
 //Overall changes I made (LG): made different functions and made prototypes for them, fixed the function writeToMaster, and made new function called findBlanks
+// (BC) Changes I made: made parseFile function, fixed a few error printing problems
