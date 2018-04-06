@@ -331,5 +331,5 @@ void findBlanks()
 
 }
 
-//Overall changes I made (LG): made different functions and made prototypes for them, fixed the function writeToMaster, and made new function called findBlanks
-// (BC) Changes I made: made parseFile function, fixed a few error printing problems
+// LG: made different functions and made prototypes for them, fixed the function writeToMaster, and made new function called findBlanks
+// BC: Changes I made: made parseFile function, fixed a few error printing problems
