@@ -43,7 +43,7 @@ class RoomList
 private:
 	
 	bool bRoomFeatures[AMAX] = { false };		//parrell array with qRoomFeatures, holds if something is found in the room
-	bool times[192] = { false };					//array holding the 5 minute intervals of the specific room
+	
 	int qRoomFeatures[AMAX] = { 0 };				//parrell array with bRoomFeatures, holds how many of something if found in the room
 	string roomName;									//holds the room name and number
 	string regionName;								//holds the region stats for priority
@@ -84,13 +84,9 @@ public:
 			cout << "[" << i << "]: " << bRoomFeatures[i] << ", " << qRoomFeatures[i] << " " << ROOMITEM[i] << endl;
 		}
 	}
-
-	//getters and setters for the class
-	bool* getTimes()
-	{
-		return this->times;
-	}
-
+	/////////////////////////////////////
+	// GETTERS AND SETTERS BELOW MATEY //
+	/////////////////////////////////////
 	string getROOMITEMSingle(int row)
 	{
 		return ROOMITEM[row];
@@ -141,13 +137,6 @@ public:
 		for (int i = 0; i < AMAX; i++)
 		{
 			this->bRoomFeatures[i] = bRoomFeatures[i];
-		}
-	}
-	void setTimes(bool times[])
-	{
-		for (int i = 0; i < AMAX; i++)
-		{
-			this->times[i] = times[i];
 		}
 	}
 	void setqRoomFeatures()
@@ -225,7 +214,7 @@ int main()
 void parseFile(string roomArray[RAROW][RACOL], RoomList roomlist[RMMAX])
 {
 	ifstream fin;															//input stream for file reading
-	fin.open("Ad Astra LC Room Description List.csv");			//setting the file to open
+	fin.open("bleh.csv");			//setting the file to open
 
 	RoomList newRoom;														//temp holder for new room information
 	string column;															//holds the string info for the comma deliminated parts
@@ -277,6 +266,7 @@ void parseFile(string roomArray[RAROW][RACOL], RoomList roomlist[RMMAX])
 	else
 	{
 		cout << "Error occured while trying to open file..." << endl;
+		system("exit");
 	}
 	fin.close();
 }
