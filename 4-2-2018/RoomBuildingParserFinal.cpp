@@ -214,7 +214,7 @@ int main()
 void parseFile(string roomArray[RAROW][RACOL], RoomList roomlist[RMMAX])
 {
 	ifstream fin;															//input stream for file reading
-	fin.open("bleh.csv");			//setting the file to open
+	fin.open("Ad Astra LC Room Description List.csv");			//setting the file to open
 
 	RoomList newRoom;														//temp holder for new room information
 	string column;															//holds the string info for the comma deliminated parts
