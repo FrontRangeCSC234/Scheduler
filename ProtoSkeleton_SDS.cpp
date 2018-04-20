@@ -9,11 +9,11 @@
 using namespace std;
 
 const short int ROOMCOL = 17;
-const short int SECTIONCOL = 13;
+const short int SECTIONCOL = 15;
 const short int NUMCLASSES = 74;
 const short int NUMROOMS = 127;
 const string ROOMFILE = "Ad_Astra_LC_Room_Description_List.csv";
-const string COURSEFILE = "master.csv";
+const string COURSEFILE = "MASTER_NEW.csv";
 
 	//Sets position array to 1337, will not be used in final code
 void fillDefaultPosition( int positions[ ], int psize );
@@ -27,6 +27,8 @@ void fillSectionCommon( Course Sections[ ], int ssize, Common Commons[ ], int cs
 	//NOT IN USE, checks for overlapping room/course, passes to schedule
 void fillSchedule( Room Rooms[ ], int rsize, Course Sections[ ], int ssize, Schedule &schedule );
 
+void fillTest( Course *test[ ] );
+
 int main( )
 {
 	Room Rooms[NUMROOMS];
@@ -35,23 +37,40 @@ int main( )
 	int csize = 50;
 	Course Sections[NUMCLASSES];
 	int ssize = NUMCLASSES;
+	Course *test[10000];
+	for ( int i = 0; i < 10000; i++ )
+	{
+		test[i] = nullptr;
+	}
 
-	Schedule schedule;
+	Schedule schedule( Rooms, rsize );
 
 	int position[10000];
 	int psize = 10000;
 
 	fillDefaultPosition( position, psize );
 	fillRoom( Rooms, rsize );
-	fillSectionCommon( Sections, ssize, Commons, csize, position, psize );
+	//fillSectionCommon( Sections, ssize, Commons, csize, position, psize );
 
+	fillTest( test );
+	schedule.setSchedule( test, 10000 );
+	schedule.outputSchedule( );
 	//fillSchedule( Rooms, rsize, Sections, ssize, schedule );
-	schedule.fill( Rooms, rsize, Sections, ssize, position, psize );
+	//schedule.fill( Rooms, rsize, Sections, ssize, position, psize );
 
 	ofstream fout;
 	fout.open( "Schedule.csv" );
 	fout << schedule;
 	fout.close( );
+
+	for ( int i = 0; i < 10000; i++ )
+	{
+		//if ( test[i]!=nullptr )
+		//{
+		//	delete test[i];
+		//}
+		delete test[i];
+	}
 
 	system( "pause" );
 	return 0;
@@ -190,6 +209,49 @@ void fillSchedule( Room Rooms[ ], int rsize, Course Sections[ ], int ssize, Sche
 				cout << "Adding room" << endl;
 				schedule.add( Rooms[i], Sections[index] );
 			}
+		}
+	}
+}
+
+void fillTest( Course * test[ ] )
+{
+	ifstream fin;
+	fin.open( COURSEFILE );
+
+	string raw, cooked[SECTIONCOL];
+	int i = 0;
+	int col;
+
+	while ( !fin.fail( ) )
+	{
+		getline( fin, raw );
+		col = 0;
+		for ( int j = 0; j < SECTIONCOL; j++ )
+		{
+			cooked[j] = "";
+		}
+
+		for ( int j = 0; j < raw.size( ) && col < SECTIONCOL; j++ )
+		{
+			if ( raw[j] == ',' )
+			{
+				//cout << cooked[col] << endl;
+				col++;
+			}
+
+			else
+			{
+				cooked[col] += raw[j];
+			}
+		}
+		i = (atoi( cooked[CRN].c_str( ) ) - 60000);
+		if ( i > 0 && i < 10000 )
+		{
+			test[i] = new Course( cooked );
+		}
+		else
+		{
+			cout << "This is an Invalid CRN" << endl;
 		}
 	}
 }

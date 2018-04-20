@@ -26,6 +26,9 @@ class Schedule
 private:
 	string rooms[127];
 	int schedule[91][127];
+	Room *room;
+	int rsize;
+	Course *schArray[91][100];
 public:
 	Schedule( )
 	{
@@ -38,6 +41,38 @@ public:
 			for ( int j = 0; j < 127; j++ )
 			{
 				schedule[i][j] = 0;
+			}
+		}
+		for ( int i = 0; i < 91; i++ )
+		{
+			for ( int j = 0; j < 100; j++ )
+			{
+				schArray[i][j] = nullptr;
+			}
+		}
+	}
+
+	Schedule( Room *room, int rsize )
+	{
+		this->room = room;
+		this->rsize = rsize;
+
+		for ( int i = 0; i < 127; i++ )
+		{
+			rooms[i] = "NULL";
+		}
+		for ( int i = 0; i < 91; i++ )
+		{
+			for ( int j = 0; j < 127; j++ )
+			{
+				schedule[i][j] = 0;
+			}
+		}
+		for ( int i = 0; i < 91; i++ )
+		{
+			for ( int j = 0; j < 100; j++ )
+			{
+				schArray[i][j] = nullptr;
 			}
 		}
 	}
@@ -227,6 +262,68 @@ public:
 			{
 				i++;
 			}
+		}
+	}
+
+	void setSchedule( Course *Sections[ ], int ssize )
+	{
+		for ( int i = 0; i < 100; i++ )
+		{
+			string rms = room[i].getRoom( );
+			for ( int j = 0; j < ssize; j++ )
+			{
+				if ( Sections[j] != nullptr )
+				{
+					string pref = Sections[j]->getRoom( );
+					if ( pref == rms )
+					{
+						int index = 0;
+						int lookup;
+						while ( index < 91 )
+						{
+							//lookup = (schArray[index][i]->getCRN( ) - 60000);
+							if ( schArray[index][i] == nullptr )
+							{
+								cout << "Scheduling course: " << Sections[j]->getCRN( ) << endl;
+								schArray[index][i] = Sections[j];
+							}
+							else if ( schArray[index][i]->conflictCheck( *Sections[j] ) )
+							{
+								cout << "Conflict found" << endl;
+								index = 92;
+							}
+							else
+							{
+								index++;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	void outputSchedule( )
+	{
+		for ( int i = 0; i < rsize; i++ )
+		{
+			cout << room->getRoom( ) << ',';
+		}
+		cout << endl;
+		for ( int i = 0; i < 91; i++ )
+		{
+			for ( int j = 0; j < 100; j++ )
+			{
+				if ( schArray[i][j] != nullptr )
+				{
+					cout << schArray[i][j]->getCRN( ) << ',';
+				}
+				else
+				{
+					cout << 000000 << ',';
+				}
+			}
+			cout << endl;
 		}
 	}
 
