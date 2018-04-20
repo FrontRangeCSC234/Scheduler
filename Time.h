@@ -2,7 +2,7 @@
 //Room Scheduling Time Info Pt1
 //Due: 4/16/18
 //The portion of code for storing all of the relevant time information for a course.
-#pragma once
+#pragma once	
 #include <iostream>
 using namespace std;
 class Time
@@ -61,7 +61,7 @@ public:
 	int getEndM( )
 	{
 		return endM;
-	}
+	}	  
 	int getEndD( )
 	{
 		return endD;
@@ -85,7 +85,7 @@ public:
 		endD = -1;
 	}
 
-	//Will's Time conflict methods
+	//Tyler's Time conflict methods
 	bool checkForConflict(Time toCheck)
 	{
 		bool toReturn = false;
@@ -93,15 +93,15 @@ public:
 		{
 			if ( checkTimeOverlap( this->startM, toCheck.startM, this->endM, toCheck.endM ) )// Do they happen in the same month(s)
 			{
-				if ( checkTimeOverlap( this->startD, toCheck.startD, this->endD, toCheck.endD ) )// Do they happen in the same days(s) within the month
+				if (checkDayOverlap(this->courseWeek, toCheck.courseWeek))// Do they ever meet on the same day in the week
 				{
-					if(checkDayOverlap(this->courseWeek, toCheck.courseWeek ) )// Do they ever meet on the same day in the week
+					if (checkDayOfMonthOverlap( toCheck))
 					{
-						for (int i = 0; i < 7; i++ )// Do they try to meet at the same time
+						for (int i = 0; i < 7; i++)// Do they try to meet at the same time
 						{
-							if ( this->courseWeek[0][i] != -1 )
+							if (this->courseWeek[0][i] != -1)
 							{
-								if (checkTimeOverlap(this->courseWeek[0][i], toCheck.courseWeek[0][i], this->courseWeek[1][i], toCheck.courseWeek[1][i] ) )
+								if (checkTimeOverlap(this->courseWeek[0][i], toCheck.courseWeek[0][i], this->courseWeek[1][i], toCheck.courseWeek[1][i]))
 								{
 									toReturn = true;
 								}
@@ -130,6 +130,18 @@ public:
 			if (class1Week[0][i] > -1 && class2Week[0][i] > -1 )
 			{
 				toReturn = true;
+			}
+		}
+		return toReturn;
+	}
+	bool checkDayOfMonthOverlap( Time toCheck)
+	{
+		bool toReturn = true;
+		if (this->startM == toCheck.endM|| this->endM == toCheck.startM)
+		{
+			if (!checkTimeOverlap(this->startD, toCheck.startD, this->endD, toCheck.endD))// Do they happen in the same days(s) within the month
+			{
+				toReturn = false;
 			}
 		}
 		return toReturn;
