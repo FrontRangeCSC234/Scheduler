@@ -171,6 +171,7 @@ public:
 
 	bool dateConflict( Time otherDate )		//Checks for conflicting dates
 	{
+		cout << "Comparing date" << endl;
 		bool toReturn;
 		if ( sday <= otherDate.eday&&smonth <= otherDate.emonth&&syear <= otherDate.eyear )
 		{
@@ -184,12 +185,13 @@ public:
 		{
 			toReturn = false;
 		}
-
+		cout << "Date check was " << toReturn << endl;
 		return toReturn;
 	}
 
 	bool timeConflict( Time otherTime )		//Checks for conflicting times
 	{
+		cout << "Comparing time" << endl;
 		bool toReturn;
 		if ( stime <= otherTime.etime )
 		{
@@ -208,6 +210,7 @@ public:
 
 	bool weekConflict( Time otherWeek )		//Checks for overlapping week days
 	{
+		cout << "Comparign weekdays" << endl;
 		bool toReturn = false;
 		int i = 0;
 		while ( i < 7 )
@@ -217,12 +220,14 @@ public:
 				toReturn = true;
 				i = 7;
 			}
+			i++;
 		}
 		return toReturn;
 	}
 
 	bool checkForConflict( Time toCompare )	//Checks for all possible conflicts
 	{
+		cout << "Checking for conflict in time" << endl;
 		bool toReturn;
 		if ( dateConflict( toCompare ) && weekConflict( toCompare ) && timeConflict( toCompare ) )
 		{

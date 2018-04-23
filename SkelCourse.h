@@ -96,6 +96,7 @@ public:
 		//Checks for conflict w/ another object
 	bool conflictCheck( Course toCompare )
 	{
+		cout << "Checking for conflict in Course" << endl;
 		bool toReturn = time.checkForConflict( toCompare.time );
 		return toReturn;
 	}

@@ -121,10 +121,11 @@ public:
 		for ( int i = 0; i < rsize; i++ )
 		{
 			room = Rooms[i].getRoom( );
+			cout << "Checking for room " << room << endl;
 			for ( int index = 0; index < ssize; index++ )
 			{
-				cout << "Checking for room " << room << endl;
 				sroom = Sections[index].getRoom( );
+				//cout << "sroom is " << sroom << endl;
 				if ( sroom == room )
 				{
 					int loc = findRoom( room );
@@ -133,8 +134,11 @@ public:
 					int row = 0;
 					while ( row < 91 )
 					{
+						cout << "In while loop" << endl;
+						cout << "row is " << row << endl;
 						if ( schedule[row][loc] == 0 )
 						{
+							cout << "Scheduling " << Sections[index].getCRN( ) << endl;
 							schedule[row][loc] = Sections[index].getCRN( );
 							Sections[index].setIndex( loc );
 							full = false;
@@ -142,18 +146,22 @@ public:
 						}
 						else
 						{
+							cout << "Row " << row << " was full" << endl;
 							int ref = (schedule[row][loc] - 60000);
 							if ( ref >= 0 && ref < psize )
 							{
+								cout << "Checking for conflict" << endl;
+								cout << Sections[index].getCRN( ) << " " << Sections[positions[ref]].getCRN( ) << endl;
 								bool conflict = Sections[index].conflictCheck( Sections[positions[ref]] );
-								if ( Sections[index].hasLink( ) )
+								cout << "Conflict was " << conflict << endl;
+								/*if ( Sections[index].hasLink( ) )
 								{
 									Course* link = Sections[index].getLink( );
 									if ( link->getRoom( ) == room )
 									{
 										conflict += link->conflictCheck( Sections[positions[ref]] );
 									}
-								}
+								}*/
 								if ( conflict )
 								{
 									cout << Sections[index].getCRN( ) << " conflicts with " << schedule[row][loc] << endl;
@@ -167,7 +175,9 @@ public:
 							}
 							row++;
 						}
+						cout << "End found" << endl;
 					}
+					//cout << "Made it to the end" << endl;
 					if ( full )
 					{
 						cout << rooms[loc] << " was full" << endl;

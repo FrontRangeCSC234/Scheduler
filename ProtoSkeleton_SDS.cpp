@@ -9,11 +9,11 @@
 using namespace std;
 
 const short int ROOMCOL = 17;
-const short int SECTIONCOL = 13;
-const short int NUMCLASSES = 74;
-const short int NUMROOMS = 127;
+const short int SECTIONCOL = 14;
+const short int NUMCLASSES = 707;
+const short int NUMROOMS = 100;
 const string ROOMFILE = "Ad_Astra_LC_Room_Description_List.csv";
-const string COURSEFILE = "master.csv";
+const string COURSEFILE = "MASTER_NEW.csv";
 
 	//Sets position array to 1337, will not be used in final code
 void fillDefaultPosition( int positions[ ], int psize );
@@ -31,8 +31,8 @@ int main( )
 {
 	Room Rooms[NUMROOMS];
 	int rsize = NUMROOMS;
-	Common Commons[50];
-	int csize = 50;
+	Common Commons[200];
+	int csize = 200;
 	Course Sections[NUMCLASSES];
 	int ssize = NUMCLASSES;
 
@@ -123,7 +123,7 @@ void fillSectionCommon( Course Sections[ ], int ssize, Common Commons[ ], int cs
 		{
 			if ( raw[j] == ',' )
 			{
-				//cout << cooked[col] << endl;
+				//cout << cooked[col] << " ";
 				col++;
 			}
 
@@ -132,6 +132,7 @@ void fillSectionCommon( Course Sections[ ], int ssize, Common Commons[ ], int cs
 				cooked[col] += raw[j];
 			}
 		}
+		//cout << endl;
 
 		Sections[i].fill( cooked );
 		int index = (Sections[i].getCRN( ) - 60000);
