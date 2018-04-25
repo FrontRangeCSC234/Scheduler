@@ -1,6 +1,7 @@
 #pragma once
-#include "SkelCourse.h"
-#include "SkelRoom.h"
+//#include "SkelCourse.h"
+//#include "Room.h"
+#include "All_Included_Files.h"
 
 /*****************************
 Documentation:
@@ -44,27 +45,27 @@ public:
 		}
 	}
 
-		//Adds a single course to the schedule, cannot check for conflicts
-	void add( Room &room, Course &Course )
+	//Adds a single course to the schedule, cannot check for conflicts
+	void add( Room &room, Course &course )
 	{
 		cout << "In add" << endl;
 		int index = 0;
-		string roomnum = room.getRoom( );
+		string roomnum = room.getroomName( );
 		while ( index < NUMROOMZ )
 		{
 			if ( rooms[index] == "NULL" )
 			{
 				cout << "Adding room" << endl;
 				rooms[index] = roomnum;
-				room.setIndex( index );
-				Course.setIndex( index );
+				//room.setIndex( index );
+				//course.setIndex( index );
 				cout << rooms[index] << endl;
 				break;
 			}
 			else if ( rooms[index] == roomnum )
 			{
 				cout << "Found room" << endl;
-				Course.setIndex( index );
+				//course.setIndex( index );
 				cout << rooms[index] << endl;
 				break;
 			}
@@ -80,7 +81,7 @@ public:
 			if ( schedule[row][index] == nullptr )
 			{
 				cout << "Setting CRN" << endl;
-				schedule[row][index] = &Course;
+				schedule[row][index] = &course;
 				full = false;
 				cout << schedule[row][index] << endl;
 				break;
@@ -92,7 +93,7 @@ public:
 		}
 	}
 
-		//Returns the index of a room in the rooms array
+	//Returns the index of a room in the rooms array
 	int findRoom( string room )
 	{
 		int index = 0;
@@ -116,7 +117,7 @@ public:
 		return 0;
 	}
 
-		//Schedules all rooms at once, methods are outdated
+	//Schedules all rooms at once, methods are outdated
 	void fill( Room Rooms[ ], int rsize, Course Sections[ ], int ssize, int positions[ ], int psize )
 	{
 		ofstream fout;
@@ -124,7 +125,7 @@ public:
 		string sroom, room;
 		for ( int i = 0; i < rsize; i++ )
 		{
-			room = Rooms[i].getRoom( );
+			room = Rooms[i].getroomName( );
 			//cout << "Checking for room " << room << endl;
 			for ( int index = 0; index < ssize; index++ )
 			{
@@ -133,7 +134,7 @@ public:
 				if ( sroom == room )
 				{
 					int loc = findRoom( room );
-					Rooms[i].setIndex( loc );
+					//Rooms[i].setIndex( loc );
 					bool full = true;
 					int row = 0;
 					while ( row < 91 )
@@ -160,11 +161,11 @@ public:
 								//cout << "Conflict was " << conflict << endl;
 								/*if ( Sections[index].hasLink( ) )
 								{
-									Course* link = Sections[index].getLink( );
-									if ( link->getRoom( ) == room )
-									{
-										conflict += link->conflictCheck( Sections[positions[ref]] );
-									}
+								Course* link = Sections[index].getLink( );
+								if ( link->getRoom( ) == room )
+								{
+								conflict += link->conflictCheck( Sections[positions[ref]] );
+								}
 								}*/
 								if ( conflict )
 								{
@@ -193,7 +194,7 @@ public:
 		fout.close( );
 	}
 
-		//Finds an existing index or assigns one to a room, returns the index
+	//Finds an existing index or assigns one to a room, returns the index
 	int findRoomIndex( Room *Room )
 	{
 		int index = 0;
@@ -222,7 +223,7 @@ public:
 		return index;
 	}
 
-		//NOT FINISHED
+	//NOT FINISHED
 	void addSection( Course *course, Course sections[ ], int index, int pos[ ], int psize )
 	{
 		int i = 0;
@@ -248,30 +249,30 @@ public:
 
 	/*void outputRoomSchedule( Room toFind )
 	{
-		ofstream fout;
-		string desiredRoom = toFind.getRoom( );
-		string filename = desiredRoom + ".csv";
-		int loc = findRoomIndex( &toFind );
-		fout.open( filename );
-		for ( int i = 0; i < 91; i++ )
-		{
-			for ( int j = 0; j < 7; j++ )
-			{
-				if ( schedule[i][loc]->checkDays( j ) )
-				{
-					fout << schedule[i][loc]->getCRN( ) << ',';
-				}
-				else
-				{
-					fout << ',';
-				}
-			}
-			fout << endl;
-		}
-		fout.close( );
+	ofstream fout;
+	string desiredRoom = toFind.getRoom( );
+	string filename = desiredRoom + ".csv";
+	int loc = findRoomIndex( &toFind );
+	fout.open( filename );
+	for ( int i = 0; i < 91; i++ )
+	{
+	for ( int j = 0; j < 7; j++ )
+	{
+	if ( schedule[i][loc]->checkDays( j ) )
+	{
+	fout << schedule[i][loc]->getCRN( ) << ',';
+	}
+	else
+	{
+	fout << ',';
+	}
+	}
+	fout << endl;
+	}
+	fout.close( );
 	}*/
 
-		//Outputs entire schedule array in CSV friendly format
+	//Outputs entire schedule array in CSV friendly format
 	friend ostream &operator<< ( ostream &stream, Schedule toOutput )
 	{
 		for ( int i = 0; i < NUMROOMZ; i++ )

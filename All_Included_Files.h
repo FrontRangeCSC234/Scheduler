@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -7,4 +8,5 @@
 #include <ostream>
 #include "Common.h"
 #include "Time.h"
+#include "Room.h"
 #include "course.h"

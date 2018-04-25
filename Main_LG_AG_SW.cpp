@@ -12,21 +12,64 @@ void createMasterFile( );
 int main( )
 {
 	Course classArray[750];
-	fileReadIn( classArray );
+	courseFileReadIn( classArray );
+
+	string nameArray[RMMAX];
+	Room roomList[RMMAX];
+
+	int userChoice = 1;
 
 	Common commonArray[750]; 
 
-	Common::initializeCommonArray( commonArray);
-	Common::fillCommon( commonArray );
-
-
-
-
-	displayMenu( );
 	
 
-}
 
+
+	while ( userChoice != 0 )
+	{
+		displayMenu( );
+		cin >> userChoice;
+		switch ( userChoice )
+		{
+		case 1:
+			cout << "case 1" << endl;
+			createMasterFile( );
+			break;
+		case 2:
+			cout << "case 2" << endl;
+			//searchForCourse( );
+			break;
+		case 3:
+			cout << "case 3" << endl;
+			//searchForRoom( );
+			break;
+		case 4:
+			cout << "case 4" << endl;
+			//findAvailableRooms( );
+			break;
+		case 5:
+			cout << "case 5" << endl;
+			//addCourse( );
+			break;
+		case 6:
+			//callCommon()
+			fillRoomArray(nameArray,roomList);
+			Common::initializeCommonArray( commonArray );
+			Common::fillCommon( commonArray );
+			courseFileReadIn( classArray );
+			break;
+		case 0:
+			cout << "EXITING PROGRAM!" << endl;
+			break;
+		default:
+			cout << "Invalid choice" << endl;
+			break;
+		}
+	}
+
+	system( "pause" );
+	return 0;
+}
 
 
 /****************************************************************************************
@@ -35,44 +78,17 @@ int main( )
 */
 void displayMenu( )
 {
-	int userChoice;
+
 
 	cout << "What would you like to do?" << endl;
+	cout << "(0) EXIT PROGRAM" << endl;
 	cout << "(1) Create a master file." << endl;
 	cout << "(2) Search for a course." << endl;
 	cout << "(3) Search for a room." << endl;
 	cout << "(4) Find available rooms." << endl;
 	cout << "(5) Add a course." << endl;
-	cin >> userChoice;
-
-	// Each case is one of the choices that will correspond to a method call
-	// This also makes it easy to add more if needed
-	switch ( userChoice )
-	{
-	case 1:
-		cout << "case 1" << endl;
-		createMasterFile( );
-		break;
-	case 2:
-		cout << "case 2" << endl;
-		//searchForCourse( );
-		break;
-	case 3:
-		cout << "case 3" << endl;
-		//searchForRoom( );
-		break;
-	case 4:
-		cout << "case 4" << endl;
-		//findAvailableRooms( );
-		break;
-	case 5:
-		cout << "case 5" << endl;
-		//addCourse( );
-		break;
-	default:
-		cout << "Invalid choice" << endl;
-		break;
-	}
+	cout << "(6) Make Schedule" << endl;
+	
 }
 
 
