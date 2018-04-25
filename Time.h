@@ -54,6 +54,10 @@ public:
 	{
 		return startD;
 	}
+	int * getCourseWeek()
+	{
+		return *courseWeek;
+	}
 	int getEndY( )
 	{
 		return endY;
