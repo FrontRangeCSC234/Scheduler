@@ -29,6 +29,7 @@ class Schedule
 private:
 	string rooms[NUMROOMZ];
 	Course * schedule[91][NUMROOMZ];
+
 public:
 	Schedule( )
 	{
@@ -145,14 +146,14 @@ public:
 						{
 							//cout << "Scheduling " << Sections[index].getCRN( ) << endl;
 							schedule[row][loc] = &Sections[index];
-							Sections[index].setIndex( loc );
+							//Sections[index].setIndex( loc );
 							full = false;
 							break;
 						}
 						else
 						{
 							//cout << "Row " << row << " was full" << endl;
-							int ref = (schedule[row][loc]->getCRN( ) - 60000);
+							int ref = (schedule[row][loc]->getCrn( ) - 60000);
 							if ( ref >= 0 && ref < psize )
 							{
 								//cout << "Checking for conflict" << endl;
@@ -198,14 +199,14 @@ public:
 	int findRoomIndex( Room *Room )
 	{
 		int index = 0;
-		string roomnum = Room->getRoom( );
+		string roomnum = Room->getroomName( );
 		while ( index < NUMROOMZ )
 		{
 			if ( rooms[index] == "NULL" )
 			{
 				//cout << "Adding room" << endl;
 				rooms[index] = roomnum;
-				Room->setIndex( index );
+				//Room->setIndex( index );
 				cout << rooms[index] << endl;
 				break;
 			}
@@ -229,7 +230,7 @@ public:
 		int i = 0;
 		while ( i < 91 )
 		{
-			int position = (schedule[i][index]->getCRN( ) - 60000);
+			int position = (schedule[i][index]->getCrn( ) - 60000);
 			if ( schedule[i][index] == 0 )
 			{
 				schedule[i][index] = course;
