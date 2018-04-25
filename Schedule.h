@@ -246,7 +246,7 @@ public:
 		}
 	}
 
-	void outputRoomSchedule( Room toFind )
+	/*void outputRoomSchedule( Room toFind )
 	{
 		ofstream fout;
 		string desiredRoom = toFind.getRoom( );
@@ -259,7 +259,7 @@ public:
 			{
 				if ( schedule[i][loc]->checkDays( j ) )
 				{
-					fout << schedule[i][loc]->getTitle( ) << ',';
+					fout << schedule[i][loc]->getCRN( ) << ',';
 				}
 				else
 				{
@@ -269,7 +269,7 @@ public:
 			fout << endl;
 		}
 		fout.close( );
-	}
+	}*/
 
 		//Outputs entire schedule array in CSV friendly format
 	friend ostream &operator<< ( ostream &stream, Schedule toOutput )
