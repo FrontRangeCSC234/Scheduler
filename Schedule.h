@@ -169,7 +169,7 @@ public:
 			}
 		}
 		cout << "Error when trying to find room" << endl;
-		return 0;
+		return -1;
 	}
 
 	//Schedules all rooms at once, methods are outdated
@@ -305,22 +305,25 @@ public:
 			if ( courses[i].getCrn( ) != -1 )
 			{
 				col = findRoom( courses[i].getRoom( ) );
-				for ( int row = 0; row < 91; row++ )
+				if ( col >= 0 && col < RMMAX )
 				{
-					if ( schedule[row][col] == nullptr )
+					for ( int row = 0; row < 91; row++ )
 					{
-						schedule[row][col] = &courses[i];
-						break;
-					}
-					else if ( schedule[row][col]->conflictCheck( courses[i] ) )
-					{
-						cout << "Conflict found" << endl;
-						fout << courses[i].getCrn( ) << endl;
-						break;
-					}
-					else
-					{
-						cout << "Checking next row" << endl;
+						if ( schedule[row][col] == nullptr )
+						{
+							schedule[row][col] = &courses[i];
+							break;
+						}
+						else if ( schedule[row][col]->conflictCheck( courses[i] ) )
+						{
+							cout << "Conflict found" << endl;
+							fout << courses[i].getCrn( ) << endl;
+							break;
+						}
+						else
+						{
+							cout << "Checking next row" << endl;
+						}
 					}
 				}
 				//Below code assumes changes made in course that are not yet implimented
