@@ -12,12 +12,12 @@
 |
 \*********************************************************************************************************************************************/
 
-#pragma once
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <string.h>
+#pragma once
 
 using namespace std;
 
@@ -40,7 +40,7 @@ const int INTERVAL = ((16 * 60) / 5);
 *data members: const string ROOMITEM[], bool bRoomFeatures[], bool times[], int qRoomFeatures[], string roomName, string regionName, int capacity
 *Description: class used for storing the information given by the ad astra csv file
 **************************************************************************************************************************************************/
-class Room
+class RoomList
 {
 private:
 
@@ -54,13 +54,13 @@ private:
 public:
 
 	//defualt constructor
-	Room()
+	RoomList()
 	{
 		roomName = "EMPTY";
 		regionName = "EMPTY";
 	}
 	//paramtered constructor
-	Room(int capacity, string roomName, string regionName, bool bRoomFeatures[], int iRoomFeatures[])
+	RoomList(int capacity, string roomName, string regionName, bool bRoomFeatures[], int iRoomFeatures[])
 	{
 		this->roomName = roomName;
 		this->regionName = regionName;
@@ -165,28 +165,30 @@ public:
 //prototypes live here
 void changeToLowerCase(string &line);											//takes in a string and returns the string in lower case
 string splitLine(string &line, char dlim);										//takes in a string and delimiter then splits the line
-void parseFile(string roomArray[RAROW][RACOL], Room roomlist[RMMAX]);				//parses the input file and stores it into the arrays
+void parseFile(string roomArray[RAROW][RACOL], RoomList roomlist[RMMAX]);				//parses the input file and stores it into the arrays
 int convertToNumber(string toConvert);											//takes in a string and returns the integer number
-void fillDataStructure(string roomArray[RAROW][RACOL], Room rooms[RMMAX], string nameArray[]);
-void parse15(string line, int row, string roomArray[RAROW][RACOL], Room room[RMMAX]);
-void clone(Room &croom, Room room);
-void printRoomList(Room room[RMMAX]);
+void fillDataStructure(string roomArray[RAROW][RACOL], RoomList rooms[RMMAX], string nameArray[]);
+void parse15(string line, int row, string roomArray[RAROW][RACOL], RoomList room[RMMAX]);
+void clone(RoomList &croom, RoomList room);
+void printRoomList(RoomList room[RMMAX]);
 void bubbleSort(string nameArray[], int aSize);
-int find(string toFind, Room array[]);
-void sortObjects(string nameArray[], int aSize, Room sortThis[]);
+int find(string toFind, RoomList array[]);
+void sortObjects(string nameArray[], int aSize, RoomList sortThis[]);
 
 /*******************************************************************************************
 *----------------------------------MAIN LIVES HERE!---------------------------------------*
 *******************************************************************************************/
-void fillRoomArray(string nameArray[], Room roomlist[])
+void fillRoomArray()
 {
+	string nameArray[RMMAX];
+	RoomList roomlist[RMMAX];
 	string roomArray[RAROW][RACOL];
 	parseFile(roomArray, roomlist);
 	fillDataStructure(roomArray, roomlist, nameArray);
 	int aSize = sizeof(nameArray) / sizeof(nameArray[0]);
 	bubbleSort(nameArray, aSize);
 	sortObjects(nameArray, aSize, roomlist);
-	cout << "ROOMARRAY MADE" << endl;
+	system("pause");
 }
 
 //functionName: sortObjects
@@ -194,9 +196,9 @@ void fillRoomArray(string nameArray[], Room roomlist[])
 //Parameters: nameArray: total names in the school, aSize: Size of the array, sortThis: Object array to be sorted.
 //Return: NONE
 //Description: Does a linear search to sort the array of class objects.
-static void sortObjects(string nameArray[], int aSize, Room sortThis[])
+static void sortObjects(string nameArray[], int aSize, RoomList sortThis[])
 {
-	Room bucketA[RMMAX];
+	RoomList bucketA[RMMAX];
 	int loc;
 	string toFind;
 	for (int i = 2; i < RMMAX; i++)
@@ -217,7 +219,7 @@ static void sortObjects(string nameArray[], int aSize, Room sortThis[])
 //Parameters: toFind: string to find. array: the array of objects that need to be found
 //Return: NONE
 //Description: find the word you need, by searching through the array.
-static int find(string toFind, Room array[])
+static int find(string toFind, RoomList array[])
 {
 	for (int i = 0; i < RMMAX; i++)
 	{
@@ -260,12 +262,12 @@ static void bubbleSort(string arr[], int aSize)
 /******************************************************************
 *parseFile - parses the ad astra csv and intjects into room class*
 ******************************************************************/
-static void parseFile(string roomArray[RAROW][RACOL], Room roomlist[RMMAX])
+static void parseFile(string roomArray[RAROW][RACOL], RoomList roomlist[RMMAX])
 {
 	ifstream fin;															//input stream for file reading
 	fin.open("Ad Astra LC Room Description List.csv");			//setting the file to open
 
-	Room newRoom;														//temp holder for new room information
+	RoomList newRoom;														//temp holder for new room information
 	string column;															//holds the string info for the comma deliminated parts
 	string line;															//holds the full string
 
@@ -322,7 +324,7 @@ static void parseFile(string roomArray[RAROW][RACOL], Room roomlist[RMMAX])
 /********************************************************************
 *parse15 - Takes in string, parses by ; and checks for special cases*
 *********************************************************************/
-static void parse15(string line, int row, string roomArray[RAROW][RACOL], Room room[RMMAX])
+static void parse15(string line, int row, string roomArray[RAROW][RACOL], RoomList room[RMMAX])
 {
 
 	//system("pause");
@@ -381,9 +383,9 @@ static void parse15(string line, int row, string roomArray[RAROW][RACOL], Room r
 *parameters: string line, string roomArray[100][17], RoomList rooms[98]
 *return: void
 ********************************************************************************/
-static void fillDataStructure(string roomArray[RAROW][RACOL], Room rooms[RMMAX], string nameArray[])
+static void fillDataStructure(string roomArray[RAROW][RACOL], RoomList rooms[RMMAX], string nameArray[])
 {
-	Room newRoom;
+	RoomList newRoom;
 	string line, line2;
 	for (int i = 1; i < 99; i++)										//start putting things in the data structure
 	{
@@ -460,7 +462,7 @@ static int convertToNumber(string toConvert)
 /****************************************************************
 *clone - takes info from one RoomList and clones it into another*
 *****************************************************************/
-static void clone(Room &croom, Room room)
+static void clone(RoomList &croom, RoomList room)
 {
 	croom.setRegionName(room.getRegionName());
 	croom.setroomName(room.getroomName());
@@ -471,7 +473,7 @@ static void clone(Room &croom, Room room)
 /****************************************************************
 *clone - takes info from one RoomList and clones it into another*
 *****************************************************************/
-static void printRoomList(Room room[RMMAX])
+static void printRoomList(RoomList room[RMMAX])
 {
 	for (int index = 0; index < RMMAX; index++)
 	{
