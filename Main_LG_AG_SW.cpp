@@ -11,8 +11,11 @@ void createMasterFile( );
 
 int main( )
 {
-	Course classArray[750];
-	courseFileReadIn( classArray );
+	ofstream fout;
+
+	//Course classArray[750];
+	//courseFileReadIn( classArray );
+	Course ** classArray;
 
 	string nameArray[RMMAX];
 	Room roomList[RMMAX];
@@ -21,7 +24,7 @@ int main( )
 
 	Common commonArray[750]; 
 
-	
+	Schedule schedule;
 
 
 
@@ -54,9 +57,29 @@ int main( )
 		case 6:
 			//callCommon()
 			fillRoomArray(nameArray,roomList);
+
+			//For testing purposes
+			/*for ( int i = 0; i < RMMAX; i++ )
+			{
+				cout << nameArray[i] << endl;
+			}*/
+
 			Common::initializeCommonArray( commonArray );
 			Common::fillCommon( commonArray );
-			courseFileReadIn( classArray );
+			//courseFileReadIn( classArray );
+			classArray = coursePointerFill( );
+			schedule.setRoomArray( nameArray );
+			//schedule.fill( roomList, classArray );
+			//schedule.fillQuicklyOBJArray( classArray );
+			schedule.fillQuicklyPTRArray( classArray );
+			break;
+		case 7:
+			cout << schedule;
+			break;
+		case 8:
+			fout.open( "Schedule.csv" );
+			fout << schedule;
+			fout.close( );
 			break;
 		case 0:
 			cout << "EXITING PROGRAM!" << endl;
@@ -66,7 +89,8 @@ int main( )
 			break;
 		}
 	}
-
+	cout << "Deleting" << endl;
+	deletePointerArray( classArray );
 	system( "pause" );
 	return 0;
 }
@@ -88,7 +112,8 @@ void displayMenu( )
 	cout << "(4) Find available rooms." << endl;
 	cout << "(5) Add a course." << endl;
 	cout << "(6) Make Schedule" << endl;
-	
+	cout << "(7) Output Schedule to console" << endl;
+	cout << "(8) Make Schedule file" << endl;
 }
 
 

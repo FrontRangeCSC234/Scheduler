@@ -22,7 +22,7 @@ checks for 0's when scheduling)
 -Method for outputing schedule, currently outputs arrays using overloaded <<
 *******************************/
 
-const int COURSEMAX = 750;
+const int COURSEMAX = 10000;
 
 class Schedule
 {
@@ -148,10 +148,10 @@ public:
 
 	////////////////////METHODS////////////////////////////
 
-	//Returns the index of a room in the rooms array
+		//Returns the index of a room in the rooms array
 	int findRoom( string room )
 	{
-		int index = 0;
+		int index = 0;						//Position in rooms string array
 		while ( index < RMMAX )
 		{
 			if ( rooms[index] == "NULL" )
@@ -172,7 +172,7 @@ public:
 		return -1;
 	}
 
-	//Schedules all rooms at once, methods are outdated
+		//Schedules all rooms at once, methods are outdated
 	void fill( Room Rooms[ ], Course Sections[ ])
 	{
 		ofstream fout;
@@ -232,15 +232,16 @@ public:
 		//Fills schedule array using course ptr array, assumes rooms has been set
 	void fillQuicklyPTRArray( Course *courses[ ] )
 	{
-		int i = 0;
-		int col = 0;
-		ofstream fout;
+		int i = 0;							//While loop control
+		int col = 0;						//Active columns
+
+		ofstream fout;						//Error output
 		fout.open( "problems.txt" );
 		while ( i < COURSEMAX )
 		{
 			if ( courses[i] != nullptr )
 			{
-				col = findRoom( courses[i]->getRoomNum( ) );
+				col = findRoom( courses[i]->getRoomNum( ) );	//Finds column for desired room
 				if ( col >= 0 && col < RMMAX )
 				{
 					for ( int row = 0; row < 91; row++ )
@@ -252,48 +253,54 @@ public:
 						}
 						else if ( schedule[row][col]->conflictCheck( *courses[i] ) )
 						{
-							cout << "Conflict found" << endl;
-							fout << courses[i]->getCrn( ) << endl;
+							//cout << "Conflict found" << endl;			//For testing
+
+							fout << courses[i]->getCrn( ) << endl;		//Error output
 							break;
 						}
 						else
 						{
-							cout << "Checking next row" << endl;
+							//cout << "Checking next row" << endl;	//For testing
 						}
 					}
 				}
 				else
 				{
-					cout << "Room not found" << endl;
-					fout << courses[i]->getCrn( ) << endl;
+					//cout << "Room not found" << endl;		//For testing
+
+					fout << courses[i]->getCrn( ) << endl;		//Error output
 				}
-				i++;
 
-				//Below assumes changes in course not yet implimented
-
-				/*if ( courses[i]->getLinked( ) != nullptr )
+					//Below checks for and schedules a course linked to courses[i]
+				if ( courses[i]->getLinked( ) != nullptr )
 				{
 					Course *link = courses[i]->getLinked( );
-					col = findRoom( link->getRoom( ) );
+					col = findRoom( link->getRoomNum( ) );
 					for ( int row = 0; row < 91; row++ )
 					{
 						if ( schedule[row][col] == nullptr )
 						{
+							//cout << "Scheduling linked course" << link->getCrn( ) << endl;	//For testing
+							
 							schedule[row][col] = link;
 							break;
 						}
 						else if ( schedule[row][col]->conflictCheck( *link ) )
 						{
-							cout << "conflict found with linked course" << endl;
+							//cout << "conflict found with linked course" << endl;	//For testing
+							
+								//Outputs main and linked CRN's to show that a linked course had an error
 							fout << courses[i]->getCrn( ) << ',' << link->getCrn( ) << endl;
 							break;
 						}
 						else
 						{
-							cout << "Link checking next row" << endl;
+							//cout << "Link checking next row" << endl;		//For testing
 						}
 					}
-				}*/
+				}
+
+				i++;
 			}
 			else
 			{
@@ -306,18 +313,20 @@ public:
 		//Fills schedule array usinge course obj array, assumes rooms has been set
 	void fillQuicklyOBJArray( Course courses[ ] )
 	{
-		int i = 0;
-		int col = 0;
-		ofstream fout;
+		int i = 0;							//While loop control
+		int col = 0;						//Active column
+
+		ofstream fout;						//For error output
 		fout.open( "problems.txt" );
+
 		while ( i < COURSEMAX )
 		{
-			if ( courses[i].getCrn( ) != -1 )
+			if ( courses[i].getCrn( ) != -1 )		//Makes sure course is filled
 			{
-				col = findRoom( courses[i].getRoomNum( ) );
+				col = findRoom( courses[i].getRoomNum( ) );		//Finds index of desired room
 				if ( col >= 0 && col < RMMAX )
 				{
-					for ( int row = 0; row < 91; row++ )
+					for ( int row = 0; row < 91; row++ )		//Checks entire column
 					{
 						if ( schedule[row][col] == nullptr )
 						{
@@ -326,27 +335,29 @@ public:
 						}
 						else if ( schedule[row][col]->conflictCheck( courses[i] ) )
 						{
-							cout << "Conflict found" << endl;
-							fout << courses[i].getCrn( ) << endl;
+							//cout << "Conflict found" << endl;			//For testing
+
+							fout << courses[i].getCrn( ) << endl;		//Error output
 							break;
-						}
-						else
+						}				
+						else								//For testing if loop is working			
 						{
-							cout << "Checking next row" << endl;
+							//cout << "Checking next row" << endl;		//For testing
 						}
 					}
 				}
-				else
+				else								//Room didn't exist
 				{
-					cout << "Room not found" << endl;
+					//cout << "Room not found" << endl;				//For testing
+
 					fout << courses[i].getCrn( ) << endl;
 				}
-				//Below code assumes changes made in course that are not yet implimented
 
-				/*Course*link = courses[i].getLinked( );
+					//Below checks for and schedules a course linked to courses[i]
+				Course*link = courses[i].getLinked( );
 				if ( link != nullptr )
 				{
-					col = findRoom( link->getRoom( ) );
+					col = findRoom( link->getRoomNum( ) );
 					for ( int row = 0; row < 91; row++ )
 					{
 						if ( schedule[row][col] == nullptr )
@@ -356,20 +367,21 @@ public:
 						}
 						else if ( schedule[row][col]->conflictCheck( *link ) )
 						{
-							cout << "conflict found with linked course" << endl;
+							//cout << "conflict found with linked course" << endl;		//For testing
+							
 							fout << courses[i].getCrn( ) << ',' << link->getCrn( ) << endl;
 							break;
 						}
 						else
 						{
-							cout << "Link checking next row" << endl;
+							//cout << "Link checking next row" << endl;		//For testing
 						}
 					}
 				}
 				else
 				{
-					cout << "Link was nullptr" << endl;
-				}*/
+					//cout << "Link was nullptr" << endl;		//For testing
+				}
 				i++;
 			}
 			else
@@ -407,30 +419,6 @@ public:
 			}
 		}
 		return index;
-	}
-
-	//NOT FINISHED
-	void addSection( Course *course, Course sections[ ], int index, int pos[ ], int psize )
-	{
-		int i = 0;
-		while ( i < 91 )
-		{
-			int position = (schedule[i][index]->getCrn( ) - 60000);
-			if ( schedule[i][index] == 0 )
-			{
-				schedule[i][index] = course;
-				break;
-			}
-			else if ( course->conflictCheck( sections[pos[position]] ) )
-			{
-				cout << "conflict reached" << endl;
-				break;
-			}
-			else
-			{
-				i++;
-			}
-		}
 	}
 
 	/*void outputRoomSchedule( Room toFind )

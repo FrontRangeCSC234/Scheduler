@@ -1,0 +1,22 @@
+Course:
+	-Edited pointer fill to first set pointer array to all nullptr
+		-Reason: Fixed error causeing write violations
+Room:
+	-Changed class name from RoomList to Room
+		-Reason: Made it consistent with the rest of the code
+	-Commented out line 282 "changeToLowerCase(line);"
+		-Reason: Course uses capital spelling of rooms, schedule compares strings
+	-Edited fillRoomArray to take string/room arrays as parameters
+		-Reason: These are stored in main and the needed to be filled
+	-Commented out line 191 "system("pause");"
+		-Reason: Made code run smoother when testing
+Schedule:
+	-Changed method names and algorithms to run with this code
+		-Reason: Base code didn't support schedule, needed to do this to test it
+Main:
+	-Added two options to the menu "(7) Output Schedule to console" and "(8) Make Schedule file"
+		-Reason: Needed a way to test schedule, figured it would go in eventually anyway
+	-Changed case 6 (begins line 57) to fill all necessary structures
+		-Reason: Needed all data in order to test schedule
+	-Added delete method at the end of main
+		-Reason: The course ptr array needs to be deleted
