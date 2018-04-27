@@ -168,7 +168,7 @@ public:
 				index++;
 			}
 		}
-		cout << "Error when trying to find room" << endl;
+		cout << "Error when trying to find room " << room << endl;
 		return -1;
 	}
 
@@ -184,7 +184,7 @@ public:
 			//cout << "Checking for room " << room << endl;
 			for ( int index = 0; index < COURSEMAX; index++ )
 			{
-				sroom = Sections[index].getRoom( );
+				sroom = Sections[index].getRoomNum( );
 				//cout << "sroom is " << sroom << endl;
 				if ( sroom == room )
 				{
@@ -240,25 +240,35 @@ public:
 		{
 			if ( courses[i] != nullptr )
 			{
-				col = findRoom( courses[i]->getRoom( ) );
-				for ( int row = 0; row < 91; row++ )
+				col = findRoom( courses[i]->getRoomNum( ) );
+				if ( col >= 0 && col < RMMAX )
 				{
-					if ( schedule[row][col] == nullptr )
+					for ( int row = 0; row < 91; row++ )
 					{
-						schedule[row][col] = courses[i];
-						break;
-					}
-					else if ( schedule[row][col]->conflictCheck( *courses[i] ) )
-					{
-						cout << "Conflict found" << endl;
-						fout << courses[i]->getCrn( ) << endl;
-						break;
-					}
-					else
-					{
-						cout << "Checking next row" << endl;
+						if ( schedule[row][col] == nullptr )
+						{
+							schedule[row][col] = courses[i];
+							break;
+						}
+						else if ( schedule[row][col]->conflictCheck( *courses[i] ) )
+						{
+							cout << "Conflict found" << endl;
+							fout << courses[i]->getCrn( ) << endl;
+							break;
+						}
+						else
+						{
+							cout << "Checking next row" << endl;
+						}
 					}
 				}
+				else
+				{
+					cout << "Room not found" << endl;
+					fout << courses[i]->getCrn( ) << endl;
+				}
+				i++;
+
 				//Below assumes changes in course not yet implimented
 
 				/*if ( courses[i]->getLinked( ) != nullptr )
@@ -304,7 +314,7 @@ public:
 		{
 			if ( courses[i].getCrn( ) != -1 )
 			{
-				col = findRoom( courses[i].getRoom( ) );
+				col = findRoom( courses[i].getRoomNum( ) );
 				if ( col >= 0 && col < RMMAX )
 				{
 					for ( int row = 0; row < 91; row++ )
@@ -325,6 +335,11 @@ public:
 							cout << "Checking next row" << endl;
 						}
 					}
+				}
+				else
+				{
+					cout << "Room not found" << endl;
+					fout << courses[i].getCrn( ) << endl;
 				}
 				//Below code assumes changes made in course that are not yet implimented
 
