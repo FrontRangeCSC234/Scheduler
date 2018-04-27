@@ -1,6 +1,7 @@
 #pragma once
-#include "SkelCourse.h"
-#include "SkelRoom.h"
+//#include "SkelCourse.h"
+//#include "Room.h"
+#include "All_Included_Files.h"
 
 /*****************************
 Documentation:
@@ -21,82 +22,137 @@ checks for 0's when scheduling)
 -Method for outputing schedule, currently outputs arrays using overloaded <<
 *******************************/
 
-const int NUMROOMZ = 100;
+const int COURSEMAX = 10000;
 
 class Schedule
 {
 private:
-	string rooms[NUMROOMZ];
-	Course * schedule[91][NUMROOMZ];
+	string rooms[RMMAX];
+	Course * schedule[91][RMMAX];
+
+	Course **focus;
 public:
 	Schedule( )
 	{
-		for ( int i = 0; i < NUMROOMZ; i++ )
+		for ( int i = 0; i < RMMAX; i++ )
 		{
 			rooms[i] = "NULL";
 		}
 		for ( int i = 0; i < 91; i++ )
 		{
-			for ( int j = 0; j < NUMROOMZ; j++ )
+			for ( int j = 0; j < RMMAX; j++ )
 			{
 				schedule[i][j] = nullptr;
 			}
 		}
+
+		focus = nullptr;
 	}
 
-		//Adds a single course to the schedule, cannot check for conflicts
-	void add( Room &room, Course &Course )
+	Schedule( string rmArray[RMMAX] )
 	{
-		cout << "In add" << endl;
-		int index = 0;
-		string roomnum = room.getRoom( );
-		while ( index < NUMROOMZ )
+		for ( int i = 0; i < RMMAX; i++ )
 		{
-			if ( rooms[index] == "NULL" )
+			cout << rmArray[i];
+			rooms[i] = rmArray[i];
+			cout << "Room added: " << rooms[i];
+		}
+
+		for ( int i = 0; i < 91; i++ )
+		{
+			for ( int j = 0; j < RMMAX; j++ )
 			{
-				cout << "Adding room" << endl;
-				rooms[index] = roomnum;
-				room.setIndex( index );
-				Course.setIndex( index );
-				cout << rooms[index] << endl;
-				break;
-			}
-			else if ( rooms[index] == roomnum )
-			{
-				cout << "Found room" << endl;
-				Course.setIndex( index );
-				cout << rooms[index] << endl;
-				break;
-			}
-			else
-			{
-				index++;
+				schedule[i][j] = nullptr;
 			}
 		}
-		bool full = true;
-		//int crn = Course.getCRN( );
-		for ( int row = 0; row < 91; row++ )
+
+		focus = nullptr;
+	}
+
+	~Schedule( )
+	{
+		delete focus;
+	}
+
+	////////////////////SETTERS/////////////////////
+
+	void setRoomArray( string rmArray[RMMAX] )
+	{
+		for ( int i = 0; i < RMMAX; i++ )
 		{
-			if ( schedule[row][index] == nullptr )
-			{
-				cout << "Setting CRN" << endl;
-				schedule[row][index] = &Course;
-				full = false;
-				cout << schedule[row][index] << endl;
-				break;
-			}
-		}
-		if ( full )
-		{
-			cout << roomnum[index] << " was full" << endl;
+			rooms[i] = rmArray[i];
 		}
 	}
+
+	void setSchedule( Room rms[ ], Course crs[ ] )
+	{
+		fill( rms, crs );
+	}
+
+	void setSingleRoom( string rm, int index )
+	{
+		rooms[index] = rm;
+	}
+
+	void setSingleCourse( Course *crs, int row, int col )
+	{
+		schedule[row][col] = crs;
+	}
+
+	/////////////////////GETTERS///////////////////////////
+
+	string getSingleRoom( int index )
+	{
+		return rooms[index];
+	}
+
+	Course * getCourse( int row, int col )
+	{
+		return schedule[row][col];
+	}
+
+	string * getRooms( )
+	{
+		return rooms;
+	}
+
+	void getSchedule( Course * toReturn[91][RMMAX] )
+	{
+		for ( int i = 0; i < 91; i++ )
+		{
+			for ( int j = 0; j < RMMAX; j++ )
+			{
+				toReturn[i][j] = schedule[i][j];
+			}
+		}
+	}
+
+	void getColumn( Course * toReturn[91], int index )
+	{
+		for ( int i = 0; i < 91; i++ )
+		{
+			toReturn[i] = schedule[i][index];
+		}
+	}
+
+	Course * getFocusedColumn( int index )
+	{
+		delete focus;
+		focus = new Course*[91];
+		for ( int i = 0; i < 91; i++ )
+		{
+			focus[i] = schedule[i][index];
+		}
+		return *focus;
+	}
+
+	////////////////////METHODS////////////////////////////
 
 		//Returns the index of a room in the rooms array
 	int findRoom( string room )
 	{
-		int index = 0;
-		while ( index < NUMROOMZ )
+		int index = 0;						//Position in rooms string array
+		while ( index < RMMAX )
 		{
 			if ( rooms[index] == "NULL" )
 			{
@@ -112,28 +168,28 @@ public:
 				index++;
 			}
 		}
-		cout << "Error when trying to find room" << endl;
-		return 0;
+		cout << "Error when trying to find room " << room << endl;
+		return -1;
 	}
 
 		//Schedules all rooms at once, methods are outdated
-	void fill( Room Rooms[ ], int rsize, Course Sections[ ], int ssize, int positions[ ], int psize )
+	void fill( Room Rooms[ ], Course Sections[ ])
 	{
 		ofstream fout;
 		fout.open( "ScheduleConflicts.txt" );
 		string sroom, room;
-		for ( int i = 0; i < rsize; i++ )
+		for ( int i = 0; i < RMMAX; i++ )
 		{
-			room = Rooms[i].getRoom( );
+			room = Rooms[i].getRoomName( );
 			//cout << "Checking for room " << room << endl;
-			for ( int index = 0; index < ssize; index++ )
+			for ( int index = 0; index < COURSEMAX; index++ )
 			{
-				sroom = Sections[index].getRoom( );
+				sroom = Sections[index].getRoomNum( );
 				//cout << "sroom is " << sroom << endl;
 				if ( sroom == room )
 				{
 					int loc = findRoom( room );
-					Rooms[i].setIndex( loc );
+					//Rooms[i].setIndex( loc );
 					bool full = true;
 					int row = 0;
 					while ( row < 91 )
@@ -144,39 +200,19 @@ public:
 						{
 							//cout << "Scheduling " << Sections[index].getCRN( ) << endl;
 							schedule[row][loc] = &Sections[index];
-							Sections[index].setIndex( loc );
+							//Sections[index].setIndex( loc );
 							full = false;
 							break;
 						}
 						else
 						{
-							//cout << "Row " << row << " was full" << endl;
-							int ref = (schedule[row][loc]->getCRN( ) - 60000);
-							if ( ref >= 0 && ref < psize )
+							bool conflict = Sections[index].conflictCheck( *schedule[row][loc] );
+							if ( conflict )
 							{
-								//cout << "Checking for conflict" << endl;
-								//cout << Sections[index].getCRN( ) << " " << Sections[positions[ref]].getCRN( ) << endl;
-								bool conflict = Sections[index].conflictCheck( Sections[positions[ref]] );
-								//cout << "Conflict was " << conflict << endl;
-								/*if ( Sections[index].hasLink( ) )
-								{
-									Course* link = Sections[index].getLink( );
-									if ( link->getRoom( ) == room )
-									{
-										conflict += link->conflictCheck( Sections[positions[ref]] );
-									}
-								}*/
-								if ( conflict )
-								{
-									cout << Sections[index].getCRN( ) << " conflicts with " << schedule[row][loc]->getCRN( ) << endl;
-									fout << Sections[index].getCRN( ) << endl;
-									full = false;
-									break;
-								}
-							}
-							else
-							{
-								cout << "Reference error. CRN was out of scope" << endl;
+								cout << Sections[index].getCrn( ) << " conflicts with " << schedule[row][loc]->getCrn( ) << endl;
+								fout << Sections[index].getCrn( ) << endl;
+								full = false;
+								break;
 							}
 							row++;
 						}
@@ -193,18 +229,187 @@ public:
 		fout.close( );
 	}
 
-		//Finds an existing index or assigns one to a room, returns the index
+		//Fills schedule array using course ptr array, assumes rooms has been set
+	void fillQuicklyPTRArray( Course *courses[ ] )
+	{
+		int i = 0;							//While loop control
+		int col = 0;						//Active columns
+
+		ofstream fout;						//Error output
+		fout.open( "problems.txt" );
+		while ( i < COURSEMAX )
+		{
+			//cout << i << endl;
+			if ( i == 907 )
+			{
+				cout << "Something" << endl;
+			}
+			if ( courses[i] != nullptr )
+			{
+				
+				col = findRoom( courses[i]->getRoomNum( ) );	//Finds column for desired room
+				if ( col >= 0 && col < RMMAX )
+				{
+					for ( int row = 0; row < 91; row++ )
+					{
+						if ( schedule[row][col] == nullptr )
+						{
+							schedule[row][col] = courses[i];
+							break;
+						}
+						else if ( schedule[row][col]->conflictCheck( *courses[i] ) )
+						{
+							//cout << "Conflict found" << endl;			//For testing
+
+							fout << schedule[row][col]->getCrn() << " : " << courses[i]->getCrn( ) << endl;		//Error output
+							break;
+						}
+						else
+						{
+							//cout << "Checking next row" << endl;	//For testing
+						}
+					}
+				}
+				else
+				{
+					//cout << "Room not found" << endl;		//For testing
+
+					fout << courses[i]->getCrn( ) << endl;		//Error output
+				}
+
+					//Below checks for and schedules a course linked to courses[i]
+				if ( courses[i]->getLinked( ) != nullptr )
+				{
+					Course *link = courses[i]->getLinked( );
+					col = findRoom( link->getRoomNum( ) );
+					for ( int row = 0; row < 91; row++ )
+					{
+						if ( schedule[row][col] == nullptr )
+						{
+							//cout << "Scheduling linked course" << link->getCrn( ) << endl;	//For testing
+							
+							schedule[row][col] = link;
+							break;
+						}
+						else if ( schedule[row][col]->conflictCheck( *link ) )
+						{
+							//cout << "conflict found with linked course" << endl;	//For testing
+							
+								//Outputs main and linked CRN's to show that a linked course had an error
+							fout << schedule[row][col]->getCrn() << " : " << courses[i]->getCrn( ) << ',' << link->getCrn( ) << endl;
+							break;
+						}
+						else
+						{
+							//cout << "Link checking next row" << endl;		//For testing
+						}
+					}
+				}
+
+				i++;
+			}
+			else
+			{
+				i++;
+			}
+		}
+		fout.close( );
+	}
+
+		//Fills schedule array usinge course obj array, assumes rooms has been set
+	void fillQuicklyOBJArray( Course courses[ ] )
+	{
+		int i = 0;							//While loop control
+		int col = 0;						//Active column
+
+		ofstream fout;						//For error output
+		fout.open( "problems.txt" );
+
+		while ( i < COURSEMAX )
+		{
+			if ( courses[i].getCrn( ) != -1 )		//Makes sure course is filled
+			{
+				col = findRoom( courses[i].getRoomNum( ) );		//Finds index of desired room
+				if ( col >= 0 && col < RMMAX )
+				{
+					for ( int row = 0; row < 91; row++ )		//Checks entire column
+					{
+						if ( schedule[row][col] == nullptr )
+						{
+							schedule[row][col] = &courses[i];
+							break;
+						}
+						else if ( schedule[row][col]->conflictCheck( courses[i] ) )
+						{
+							//cout << "Conflict found" << endl;			//For testing
+
+							fout <<schedule[row][col]->getCrn() << " : " << courses[i].getCrn( ) << endl;		//Error output
+							break;
+						}				
+						else								//For testing if loop is working			
+						{
+							//cout << "Checking next row" << endl;		//For testing
+						}
+					}
+				}
+				else								//Room didn't exist
+				{
+					//cout << "Room not found" << endl;				//For testing
+
+					fout << courses[i].getCrn( ) << endl;
+				}
+
+					//Below checks for and schedules a course linked to courses[i]
+				Course*link = courses[i].getLinked( );
+				if ( link != nullptr )
+				{
+					col = findRoom( link->getRoomNum( ) );
+					for ( int row = 0; row < 91; row++ )
+					{
+						if ( schedule[row][col] == nullptr )
+						{
+							schedule[row][col] = link;
+							break;
+						}
+						else if ( schedule[row][col]->conflictCheck( *link ) )
+						{
+							//cout << "conflict found with linked course" << endl;		//For testing
+							
+							fout <<schedule[row][col]->getCrn() << " : " << courses[i].getCrn( ) << ',' << link->getCrn( ) << endl;
+							break;
+						}
+						else
+						{
+							//cout << "Link checking next row" << endl;		//For testing
+						}
+					}
+				}
+				else
+				{
+					//cout << "Link was nullptr" << endl;		//For testing
+				}
+				i++;
+			}
+			else
+			{
+				i++;
+			}
+		}
+		fout.close( );
+	}
+
+	//Finds an existing index or assigns one to a room, returns the index
 	int findRoomIndex( Room *Room )
 	{
 		int index = 0;
-		string roomnum = Room->getRoom( );
-		while ( index < NUMROOMZ )
+		string roomnum = Room->getRoomName( );
+		while ( index < RMMAX )
 		{
 			if ( rooms[index] == "NULL" )
 			{
 				//cout << "Adding room" << endl;
 				rooms[index] = roomnum;
-				Room->setIndex( index );
+				//Room->setIndex( index );
 				cout << rooms[index] << endl;
 				break;
 			}
@@ -222,70 +427,46 @@ public:
 		return index;
 	}
 
-		//NOT FINISHED
-	void addSection( Course *course, Course sections[ ], int index, int pos[ ], int psize )
+	/*void outputRoomSchedule( Room toFind )
 	{
-		int i = 0;
-		while ( i < 91 )
-		{
-			int position = (schedule[i][index]->getCRN( ) - 60000);
-			if ( schedule[i][index] == 0 )
-			{
-				schedule[i][index] = course;
-				break;
-			}
-			else if ( course->conflictCheck( sections[pos[position]] ) )
-			{
-				cout << "conflict reached" << endl;
-				break;
-			}
-			else
-			{
-				i++;
-			}
-		}
-	}
-
-	void outputRoomSchedule( Room toFind )
+	ofstream fout;
+	string desiredRoom = toFind.getRoom( );
+	string filename = desiredRoom + ".csv";
+	int loc = findRoomIndex( &toFind );
+	fout.open( filename );
+	for ( int i = 0; i < 91; i++ )
 	{
-		ofstream fout;
-		string desiredRoom = toFind.getRoom( );
-		string filename = desiredRoom + ".csv";
-		int loc = findRoomIndex( &toFind );
-		fout.open( filename );
-		for ( int i = 0; i < 91; i++ )
-		{
-			for ( int j = 0; j < 7; j++ )
-			{
-				if ( schedule[i][loc]->checkDays( j ) )
-				{
-					fout << schedule[i][loc]->getTitle( ) << ',';
-				}
-				else
-				{
-					fout << ',';
-				}
-			}
-			fout << endl;
-		}
-		fout.close( );
+	for ( int j = 0; j < 7; j++ )
+	{
+	if ( schedule[i][loc]->checkDays( j ) )
+	{
+	fout << schedule[i][loc]->getCRN( ) << ',';
 	}
+	else
+	{
+	fout << ',';
+	}
+	}
+	fout << endl;
+	}
+	fout.close( );
+	}*/
 
-		//Outputs entire schedule array in CSV friendly format
+	//Outputs entire schedule array in CSV friendly format
 	friend ostream &operator<< ( ostream &stream, Schedule toOutput )
 	{
-		for ( int i = 0; i < NUMROOMZ; i++ )
+		for ( int i = 0; i < RMMAX; i++ )
 		{
 			stream << toOutput.rooms[i] << ',';
 		}
 		stream << endl;
 		for ( int i = 0; i < 91; i++ )
 		{
-			for ( int index = 0; index < NUMROOMZ; index++ )
+			for ( int index = 0; index < RMMAX; index++ )
 			{
 				if ( toOutput.schedule[i][index] != nullptr )
 				{
-					stream << toOutput.schedule[i][index]->getTitle( ) << ',';
+					stream << toOutput.schedule[i][index]->getCrn( ) << ',';
 				}
 				else
 				{

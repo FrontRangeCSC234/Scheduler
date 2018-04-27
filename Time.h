@@ -54,6 +54,10 @@ public:
 	{
 		return startD;
 	}
+	int * getCourseWeek()
+	{
+		return *courseWeek;
+	}
 	int getEndY( )
 	{
 		return endY;
@@ -66,7 +70,28 @@ public:
 	{
 		return endD;
 	}
-
+	int getStartT( )
+	{
+		for(int i = 0; i < 7; i++ )
+		{
+			if ( courseWeek[0][i] != -1 )
+			{
+				return courseWeek[0][i];
+			}
+		}
+		return -1;
+	}
+	int getEndT( )
+	{
+		for ( int i = 0; i < 7; i++ )
+		{
+			if ( courseWeek[1][i] != -1 )
+			{
+				return courseWeek[1][i];
+			}
+		}
+		return -1;
+	}
 	//Default Constructor
 	Time( )
 	{

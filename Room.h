@@ -11,13 +11,15 @@
 |				RoomList class as an array
 |
 \*********************************************************************************************************************************************/
+#pragma once
 
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <string.h>
-#pragma once
+#include "All_Included_Files.h"
+//#include <stdio.h>
+
 
 using namespace std;
 
@@ -30,8 +32,7 @@ const string ROOMITEM[AMAX]					//look up array
 "Painting and Drawing Lab", "Sink", "Laptop", "Exam Table", "Human Cadavers in Refrigeration Units", "Refrigerator","Microscope", "Map(s)" };
 
 
-const int RMMAX = 100;
-const int RAROW = 99;
+const int RAROW = 115;
 const int RACOL = 17;
 const int INTERVAL = ((16 * 60) / 5);
 
@@ -40,7 +41,7 @@ const int INTERVAL = ((16 * 60) / 5);
 *data members: const string ROOMITEM[], bool bRoomFeatures[], bool times[], int qRoomFeatures[], string roomName, string regionName, int capacity
 *Description: class used for storing the information given by the ad astra csv file
 **************************************************************************************************************************************************/
-class RoomList
+class Room
 {
 private:
 
@@ -54,13 +55,13 @@ private:
 public:
 
 	//defualt constructor
-	RoomList()
+	Room()
 	{
 		roomName = "EMPTY";
 		regionName = "EMPTY";
 	}
 	//paramtered constructor
-	RoomList(int capacity, string roomName, string regionName, bool bRoomFeatures[], int iRoomFeatures[])
+	Room(int capacity, string roomName, string regionName, bool bRoomFeatures[], int iRoomFeatures[])
 	{
 		this->roomName = roomName;
 		this->regionName = regionName;
@@ -74,7 +75,7 @@ public:
 	//prints the room info for the class
 	void printRoomInfo()
 	{
-		cout << "roomName: " << this->getroomName();
+		cout << "roomName: " << this->getRoomName();
 		cout << ", regionName: " << this->getRegionName();
 		cout << ", roomCap: " << this->getCap() << endl;
 		for (int i = 0; i < AMAX; i++)
@@ -115,7 +116,7 @@ public:
 	{
 		return this->capacity;
 	}
-	string getroomName()
+	string getRoomName()
 	{
 		return this->roomName;
 	}
@@ -165,30 +166,29 @@ public:
 //prototypes live here
 void changeToLowerCase(string &line);											//takes in a string and returns the string in lower case
 string splitLine(string &line, char dlim);										//takes in a string and delimiter then splits the line
-void parseFile(string roomArray[RAROW][RACOL], RoomList roomlist[RMMAX]);				//parses the input file and stores it into the arrays
+void parseFile(string roomArray[RAROW][RACOL], Room roomlist[RMMAX]);				//parses the input file and stores it into the arrays
 int convertToNumber(string toConvert);											//takes in a string and returns the integer number
-void fillDataStructure(string roomArray[RAROW][RACOL], RoomList rooms[RMMAX], string nameArray[]);
-void parse15(string line, int row, string roomArray[RAROW][RACOL], RoomList room[RMMAX]);
-void clone(RoomList &croom, RoomList room);
-void printRoomList(RoomList room[RMMAX]);
-void bubbleSort(string nameArray[], int aSize);
-int find(string toFind, RoomList array[]);
-void sortObjects(string nameArray[], int aSize, RoomList sortThis[]);
+void fillDataStructure(string roomArray[RAROW][RACOL], Room rooms[RMMAX], string nameArray[]);	//fills a Room array from the 2d array made from parsing
+void itemsInClassroom(string line, int row, string roomArray[RAROW][RACOL], Room room[RMMAX]);	//previously parse15, parses the 15th Col of the 2d array 
+void clone(Room &croom, Room room);												//clones right hand arguement into the left hand passed by reference
+void printRoomList(Room room[RMMAX]);											//print function for the room list
+void bubbleSort(string nameArray[], int aSize);								//its a bubble sort
+int find(string toFind, Room array[]);											//finds the string in a Room array
+void sortObjects(string nameArray[], int aSize, Room sortThis[]);		//takes in an array of strings and sorts them into new array of Rooms
 
-/*******************************************************************************************
-*----------------------------------MAIN LIVES HERE!---------------------------------------*
-*******************************************************************************************/
-void fillRoomArray()
+/********************************************************************************************
+*fillRoomArray - fills the Romm array from the 2d array made when parseing the ad astra file*
+*********************************************************************************************/
+void fillRoomArray(Room roomlist[], string nameArray[])
 {
-	string nameArray[RMMAX];
-	RoomList roomlist[RMMAX];
+	//string nameArray[RMMAX];									//needed for sorting
+	//Room roomlist[RMMAX];										//
 	string roomArray[RAROW][RACOL];
 	parseFile(roomArray, roomlist);
 	fillDataStructure(roomArray, roomlist, nameArray);
-	int aSize = sizeof(nameArray) / sizeof(nameArray[0]);
-	bubbleSort(nameArray, aSize);
-	sortObjects(nameArray, aSize, roomlist);
-	system("pause");
+	//int aSize = sizeof(nameArray) / sizeof(nameArray[0]);
+	bubbleSort(nameArray, RMMAX);
+	sortObjects(nameArray, RMMAX, roomlist);
 }
 
 //functionName: sortObjects
@@ -196,12 +196,12 @@ void fillRoomArray()
 //Parameters: nameArray: total names in the school, aSize: Size of the array, sortThis: Object array to be sorted.
 //Return: NONE
 //Description: Does a linear search to sort the array of class objects.
-static void sortObjects(string nameArray[], int aSize, RoomList sortThis[])
+static void sortObjects(string nameArray[], int aSize, Room sortThis[])
 {
-	RoomList bucketA[RMMAX];
+	Room bucketA[RMMAX];
 	int loc;
 	string toFind;
-	for (int i = 2; i < RMMAX; i++)
+	for (int i = 0; i < RMMAX; i++)
 	{
 		toFind = nameArray[i];
 		loc = find(nameArray[i], sortThis);
@@ -219,11 +219,11 @@ static void sortObjects(string nameArray[], int aSize, RoomList sortThis[])
 //Parameters: toFind: string to find. array: the array of objects that need to be found
 //Return: NONE
 //Description: find the word you need, by searching through the array.
-static int find(string toFind, RoomList array[])
+static int find(string toFind, Room array[])
 {
 	for (int i = 0; i < RMMAX; i++)
 	{
-		if (array[i].getroomName() == toFind)
+		if (array[i].getRoomName() == toFind)
 		{
 			return i;
 		}
@@ -262,12 +262,12 @@ static void bubbleSort(string arr[], int aSize)
 /******************************************************************
 *parseFile - parses the ad astra csv and intjects into room class*
 ******************************************************************/
-static void parseFile(string roomArray[RAROW][RACOL], RoomList roomlist[RMMAX])
+static void parseFile(string roomArray[RAROW][RACOL], Room roomList[RMMAX])
 {
 	ifstream fin;															//input stream for file reading
 	fin.open("Ad Astra LC Room Description List.csv");			//setting the file to open
 
-	RoomList newRoom;														//temp holder for new room information
+	Room newRoom;														//temp holder for new room information
 	string column;															//holds the string info for the comma deliminated parts
 	string line;															//holds the full string
 
@@ -276,17 +276,19 @@ static void parseFile(string roomArray[RAROW][RACOL], RoomList roomlist[RMMAX])
 		int row = 0;														//int value for the row or y
 		int index = 0;														//int value for the index or x
 		int breakLoc = 0;													//int value for the first delimiter location
-
+		getline(fin, line, '\n');										//cleans out the unneeded headers
+		
 		while (getline(fin, line, '\n') && (!fin.eof()) && row < RAROW)			//while the file still another line to get
 		{
-			changeToLowerCase(line);										//conver to lower case for ease of use
+			//changeToLowerCase(line);										//conver to lower case for ease of use
 
 			while ((!line.empty()) && (index < RAROW))							//while the there is something in the line and only 17 commas are found
 			{
-				if ((index == 15) && row != 0)					//if the 15th location is found and its not in the title row
+				if ((index == 15) )					//if the 15th location is found and its not in the title row
 				{
+					
 					breakLoc = 0;
-					while (((line[breakLoc + 1] != 'f') && (line[breakLoc] != ',')) || isdigit(line[breakLoc + 1]))	//looking ,f in the file for stopping point
+					while (((line[breakLoc + 1] != 'f') && (line[breakLoc] != ',')) || isdigit(line[breakLoc + 1]))	//looking ,f in the file for stopping point (flc in region)
 					{
 						breakLoc++;
 					}
@@ -296,7 +298,7 @@ static void parseFile(string roomArray[RAROW][RACOL], RoomList roomlist[RMMAX])
 					roomArray[row][index] = column;							//sets information in a 2d array
 
 				}
-				else if ((index == 16) && row != 0)
+				else if ((index == 16) )
 				{
 					column = splitLine(line, ',');
 					roomArray[row][index] = column;
@@ -310,6 +312,10 @@ static void parseFile(string roomArray[RAROW][RACOL], RoomList roomlist[RMMAX])
 				index++;
 			}
 			row++;
+			if (row == 101)
+			{
+				cout << "we are at 102" << endl;
+			}
 			index = 0;
 		}
 
@@ -324,7 +330,7 @@ static void parseFile(string roomArray[RAROW][RACOL], RoomList roomlist[RMMAX])
 /********************************************************************
 *parse15 - Takes in string, parses by ; and checks for special cases*
 *********************************************************************/
-static void parse15(string line, int row, string roomArray[RAROW][RACOL], RoomList room[RMMAX])
+static void itemsInClassroom(string line, int row, string roomArray[RAROW][RACOL], Room room[RMMAX])
 {
 
 	//system("pause");
@@ -332,6 +338,8 @@ static void parse15(string line, int row, string roomArray[RAROW][RACOL], RoomLi
 	string temp;									//temperary holder of the comparison string
 	std::size_t delim = line.find(';');				//the location of the ; character in the string line
 	std::size_t comma = line.find(',');				//the location of the , character in the string line
+		string numberAsChar;								//number of items before converting to a number		
+		int numberOfItems;								//number of items as an integer;
 
 	string checker[AMAX]							//temp array for comparison reasons
 		= { "Computer - Instructor","DVD Player", "LCD Overhead Projector", "Power Point Clicker", "Screen", "Phone - Star",
@@ -346,7 +354,13 @@ static void parse15(string line, int row, string roomArray[RAROW][RACOL], RoomLi
 		part = line.substr(0, delim);														//cuts the line in two at the first ; character found first portion returned
 		line = line.substr(delim + 1);													//cuts the line in two at the first ; character found second portion returned
 		comma = part.find(',');																//finds a comma in the part of the string
-
+		numberOfItems = 1;
+		if (comma != string::npos)
+		{
+			numberAsChar = part.substr(comma+1, part.size());
+			numberOfItems = convertToNumber(numberAsChar);
+			part = part.substr(0 , comma - 1);  //removes the number
+		}
 		for (int i = 0; i < AMAX; i++)											//looping through the checker array
 		{
 			temp = checker[i];																//temp value to hold checker string
@@ -354,12 +368,12 @@ static void parse15(string line, int row, string roomArray[RAROW][RACOL], RoomLi
 
 			if (part == temp)										//if strings are the same
 			{
-				room[row - 1].setbRoomSingle(true, i);
+				room[row].setbRoomSingle(true, i);
+				room[row].setqRoomSingle(numberOfItems, i);
 				break;
 			}
-			else if (part > temp)
+	/*		else if (comma !=string::npos)   //?? how can th
 			{
-				comma = part.find(',');
 				if ((comma != string::npos) && (isdigit(part[part.size() - 1])))//checking for a digit in the string at the last location
 				{
 					if (isdigit(part[part.size() - 2]))										//checking for a double 
@@ -370,10 +384,10 @@ static void parse15(string line, int row, string roomArray[RAROW][RACOL], RoomLi
 					{
 						part = part.substr(part.size() - 1);
 					}
-					room[row - 1].setqRoomSingle(convertToNumber(part), i);				//sets the number found into the parrelel arrays
+					room[row].setqRoomSingle(convertToNumber(part), i);				//sets the number found into the parrelel arrays
 				}
 
-			}
+			}*/
 		}
 
 	}
@@ -383,21 +397,20 @@ static void parse15(string line, int row, string roomArray[RAROW][RACOL], RoomLi
 *parameters: string line, string roomArray[100][17], RoomList rooms[98]
 *return: void
 ********************************************************************************/
-static void fillDataStructure(string roomArray[RAROW][RACOL], RoomList rooms[RMMAX], string nameArray[])
+static void fillDataStructure(string roomArray[RAROW][RACOL], Room rooms[RMMAX], string nameArray[])
 {
-	RoomList newRoom;
-	string line, line2;
-	for (int i = 1; i < 99; i++)										//start putting things in the data structure
-	{
-		line = roomArray[i][15];
-		line2 = roomArray[i][16];
 
-		newRoom.setroomName(roomArray[i][7]);
-		newRoom.setCap(convertToNumber(roomArray[i][14]));
-		newRoom.setRegionName(roomArray[i][16]);
-		parse15(line, i, roomArray, rooms);
-		clone(rooms[i - 1], newRoom);
-		nameArray[i - 1] = newRoom.getroomName();
+	string itemsInRoom;
+	for (int i = 0; i < RAROW; i++)										//start putting things in the data structure
+	{
+		itemsInRoom = roomArray[i][15];
+
+		rooms[i].setroomName(roomArray[i][7]);
+		rooms[i].setCap(convertToNumber(roomArray[i][14]));
+		rooms[i].setRegionName(roomArray[i][16]);
+		itemsInClassroom(itemsInRoom, i, roomArray, rooms);
+		//clone(rooms[i], rooms[i]);
+		nameArray[i] = rooms[i].getRoomName();
 	}
 }
 
@@ -462,10 +475,10 @@ static int convertToNumber(string toConvert)
 /****************************************************************
 *clone - takes info from one RoomList and clones it into another*
 *****************************************************************/
-static void clone(RoomList &croom, RoomList room)
+static void clone(Room &croom, Room room)
 {
 	croom.setRegionName(room.getRegionName());
-	croom.setroomName(room.getroomName());
+	croom.setroomName(room.getRoomName());
 	croom.setCap(room.getCap());
 	croom.setbRoomFeatures(room.getbRoomFeatures());
 }
@@ -473,11 +486,11 @@ static void clone(RoomList &croom, RoomList room)
 /****************************************************************
 *clone - takes info from one RoomList and clones it into another*
 *****************************************************************/
-static void printRoomList(RoomList room[RMMAX])
+static void printRoomList(Room room[RMMAX])
 {
 	for (int index = 0; index < RMMAX; index++)
 	{
-		cout << "roomName: " << room[index].getroomName();
+		cout << "roomName: " << room[index].getRoomName();
 		cout << ", regionName: " << room[index].getRegionName();
 		cout << ", roomCap: " << room[index].getCap() << endl;
 		for (int i = 0; i < AMAX; i++)
