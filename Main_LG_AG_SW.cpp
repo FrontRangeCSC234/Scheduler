@@ -69,6 +69,7 @@ int main( )
 		}
 	}
 
+	deletePointerArray(crnSort);
 	system( "pause" );
 	return 0;
 }
