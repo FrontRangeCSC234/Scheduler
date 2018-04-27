@@ -21,6 +21,7 @@ int main( )
 
 	Common commonArray[750]; 
 
+	Course** crnSort;
 	
 
 
@@ -57,6 +58,7 @@ int main( )
 			Common::initializeCommonArray( commonArray );
 			Common::fillCommon( commonArray );
 			courseFileReadIn( classArray );
+			crnSort = coursePointerFill();
 			break;
 		case 0:
 			cout << "EXITING PROGRAM!" << endl;

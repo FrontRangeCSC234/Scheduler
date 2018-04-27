@@ -1,4 +1,5 @@
 // MICAH HAAS
+// Edits and additions by Kyle Dickens, 4/27/18 12:46 AM
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -23,6 +24,8 @@ private:
 
 	Time classTime;
 
+	Course* linked;
+
 	//Room *RoomPtr;
 
 	//TimeInfo *ptrTime;
@@ -39,12 +42,44 @@ public:
 		teacherLN = "null";
 		section = "null";
 
+		linked = nullptr;
+
 
 		crn = -1;
 		capacity = -1;
 		roomPriority = -1;
 		timePriority = -1;
 
+	}
+
+	//Kyle Dickens, added for Sam S.
+	//Checks for a time conflict between the two courses. Will also check linked courses if need be.
+	//Edit: most of it commented out cause Sam S. is positive it will break his stuff, and I haven't had a chance to look at the interactions.
+	bool conflictCheck(Course toCompare)
+	{
+		//if (linked == nullptr && toCompare.linked == nullptr)
+		//{
+			return classTime.checkForConflict(toCompare.classTime);
+		//}
+		//else
+		//{
+		//	bool check = false;
+		//	if (linked != nullptr)
+		//	{
+		//		if (classTime.checkForConflict(toCompare.classTime) || linked->classTime.checkForConflict(toCompare.classTime))
+		//		{
+		//			check = true;
+		//		}
+		//		if (toCompare.linked != nullptr)
+		//		{
+		//			if (classTime.checkForConflict(toCompare.linked->classTime) || linked->classTime.checkForConflict(toCompare.linked->classTime))
+		//			{
+		//				check = true;
+		//			}
+		//		}
+		//	}
+		//	return check;
+		//}
 	}
 
 
@@ -54,6 +89,32 @@ public:
 
 	void setSection( string cS );
 
+	//Kyle Dickens, getters and Setters for RoomNum, TeacherLN, and Teacher FN
+	void setRoomNum(string rmNm)
+	{
+		roomNum = rmNm;
+	}
+	string getRoomNum()
+	{
+		return roomNum;
+	}
+	void setTeacherLN(string word)
+	{
+		teacherLN = word;
+	}
+	string getTeacherLN()
+	{
+		return teacherLN;
+	}
+	void setTeacherFN(string word)
+	{
+		teacherFN = word;
+	}
+	string getTeacherFN()
+	{
+		return teacherFN;
+	}
+
 
 	void setCapacity( int cap );
 
@@ -61,6 +122,23 @@ public:
 
 	void setTimePriority( int tP );
 
+	//Kyle Dickens, getters and setters for *classTime, and *linked
+	Time* getClassTimePtr()
+	{
+		return &classTime;
+	}
+	void setClassTimePtr(Time ptr)
+	{
+		classTime = ptr;
+	}
+	Course* getLinked()
+	{
+		return linked;
+	}
+	void setLinked(Course* ptr)
+	{
+		linked = ptr;
+	}
 
 	
 	string getTitle( );
@@ -93,6 +171,153 @@ public:
 
 };
 
+
+/*
+Kyle Dickens
+Makes an array of pointers. Then makes course objects, and puts the pointer in the spot corrosponding to the course's CRN.
+BOTH MUST BE DELETED AFTERWARDS!!
+I modified a copy paste of courseFileReadIn by Micah Haas and much of the logic is his. Recognition where it's due.
+*/
+Course** coursePointerFill()
+{
+	Course** cArray = new Course*[10000];
+
+	ifstream infile;
+	infile.open("MASTER.csv");
+	string line;
+	getline(infile, line, '\n');
+	while (!infile.eof())
+	{
+		Course* current = new Course();
+		int x;
+		int row = 0;
+
+		string word;
+		string startTime;
+		string endTime;
+		string startDate;
+		string endDate;
+		string dayOfWeek;
+
+		// CRN
+		x = line.find(',');
+		if (x <= 0)
+		{
+			continue;
+		}
+		word = line.substr(0, x);
+		row = atoi(word.c_str());
+		current->setCrn(row);
+		if (cArray[(row - 60000)] == nullptr)
+		{
+			cArray[(row - 60000)] = current;
+		}
+		else
+		{
+			cArray[(row - 60000)]->setLinked(current);
+			current->setLinked(cArray[(row - 60000)]);
+		}
+		
+		line = line.substr(x + 1, line.length());
+
+		// SKIP
+		x = line.find(',');
+		line = line.substr(x + 1, line.length());
+
+		// SKIP
+		x = line.find(',');
+		line = line.substr(x + 1, line.length());
+
+		// SECTION NUMBER
+		x = line.find(',');
+		word = line.substr(0, x);
+		current->setSection(word);
+		line = line.substr(x + 1, line.length());
+
+		// SKIP
+		x = line.find(',');
+		line = line.substr(x + 1, line.length());
+
+		// SKIP
+		x = line.find(',');
+		line = line.substr(x + 1, line.length());
+
+		// DAYS OF WEEK
+		x = line.find(',');
+		word = line.substr(0, x);
+		dayOfWeek = word;
+		line = line.substr(x + 1, line.length());
+
+		// START TIME
+		x = line.find(',');
+		word = line.substr(0, x);
+		startTime = word;
+		line = line.substr(x + 1, line.length());
+
+		// END TIME
+		x = line.find(',');
+		word = line.substr(0, x);
+		endTime = word;
+		line = line.substr(x + 1, line.length());
+
+		// ROOM NUMBER
+		x = line.find(',');
+		word = line.substr(0, x);
+		current->setRoomNum(word);
+		line = line.substr(x + 1, line.length());
+
+		// CAPACITY
+		x = line.find(',');
+		word = line.substr(0, x);
+		current->setCapacity(atoi(word.c_str()));
+		line = line.substr(x + 1, line.length());
+
+		// START DATE
+		x = line.find(',');
+		word = line.substr(0, x);
+		startDate = word;
+		line = line.substr(x + 1, line.length());
+
+		// END DATE
+		x = line.find(',');
+		word = line.substr(0, x);
+		endDate = word;
+		line = line.substr(x + 1, line.length());
+
+		// TEACHER LAST NAME
+		x = line.find(',');
+		word = line.substr(0, x);
+		current->setTeacherLN(word);
+		line = line.substr(x + 1, line.length());
+
+		// TEACHER FIRST NAME
+		current->setTeacherFN(word);
+
+		Time* classTime = current->getClassTimePtr();
+		classTime->setAll(dayOfWeek, startTime, endTime, startDate, endDate);
+
+		getline(infile, line, '\n');
+	}
+
+	return cArray;
+}
+
+/*
+Kyle Dickens
+Deletes the pointer array passed into after deleting all of the pointers inside of it, assuming the pointers are not nullptr;
+*/
+void deletePointerArray(Course* cArray[])
+{
+	for (int i = 0; i < 10000; i++)
+	{
+		if (cArray[i] != nullptr)
+		{
+			delete cArray[i];
+		}
+	}
+	delete cArray;
+}
+
 void courseFileReadIn( Course classArray[ ] )
 {
 	int x;
@@ -123,7 +348,7 @@ void courseFileReadIn( Course classArray[ ] )
 			continue;
 		}
 		word = line.substr( 0, x );
-		classArray[row].crn = atoi( word.c_str( ) );
+		classArray[row].crn = atoi(word.c_str());
 		line = line.substr( x + 1, line.length( ) );
 
 		// SKIP
@@ -204,6 +429,16 @@ void courseFileReadIn( Course classArray[ ] )
 		row++;
 		getline( infile, line, '\n' );
 	}
+}
+
+int parseInt(string word)
+{
+	int total = 0;
+	for (int i = 0; i < word.length; i++)
+	{
+		total += word[i];
+	}
+	return total;
 }
 
 void print( Course arr[ ] )
