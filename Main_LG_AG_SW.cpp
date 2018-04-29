@@ -5,7 +5,7 @@ using namespace std;
 //Prototypes 
 void displayMenu( );
 void createMasterFile( );
-
+void searchCRN(Course *courses[]);
 
 
 
@@ -26,8 +26,6 @@ int main( )
 
 	Schedule schedule;
 
-
-
 	while ( userChoice != 0 )
 	{
 		displayMenu( );
@@ -39,8 +37,7 @@ int main( )
 			createMasterFile( );
 			break;
 		case 2:
-			cout << "case 2" << endl;
-			//searchForCourse( );
+			searchCRN(classArray);
 			break;
 		case 3:
 			cout << "case 3" << endl;
@@ -166,7 +163,6 @@ void createMasterFile( )
 			}
 		}
 
-
 		ifstream infile( "MASTER.csv" );		//opens the file
 
 		if ( infile.is_open( ) )
@@ -195,6 +191,50 @@ void createMasterFile( )
 
 		infile.close( );
 		outFile.close( );
+	}
+}
+
+/*************************************************************************
+*	Branson Camp                                                         * 
+*	searchCRN                                                            *
+*	Prompts the user to search by crn, then prints info about the course *
+**************************************************************************/
+
+void searchCRN(Course **courseArray)
+{
+	int crnSearch = 0;
+	cout << "Search CRN: ";
+	cin >> crnSearch;
+	crnSearch -= 60000;
+	if (crnSearch < 0 || crnSearch >= COURSEMAX) {
+		cout << "INVALID CRN" << endl;
+		return;
+	}
+	if (courseArray[crnSearch] == nullptr) {
+		cout << "Class does not exist" << endl;
+	}
+	else {
+		Course found = *courseArray[crnSearch];
+		// Print out course information
+
+		string fn = found.getTeacherFN();
+		string ln = found.getTeacherLN();
+		string teacherName = "";
+		if (fn == "STAFF" || fn == "STAFF ") {
+			fn = "<UNKNOWN>";
+		}
+		if (ln == "STAFF" || ln == "STAFF ") {
+			ln = "<UNKNOWN>";
+		}
+
+		cout << endl << "---------------------------------------" << endl;
+		cout << "CRN: " << found.getCrn() << endl;
+		cout << "TITLE: " << found.getTitle() << endl;
+		cout << "SECTION: " << found.getSection() << endl;
+		cout << "ROOM: " << found.getRoomNum() << endl;
+		cout << "TEACHER(LN, FN): " << ln << ", " << fn << endl;
+		cout << "---------------------------------------" << endl << endl;
+
 	}
 }
 
