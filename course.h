@@ -1,6 +1,7 @@
 #pragma once
 // MICAH HAAS
 // Edits and additions by Kyle Dickens, 4/27/18 12:46 AM
+// Bug fix by Branson Camp 4/29/18 4:48 PM
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -296,6 +297,8 @@ Course** coursePointerFill()
 		line = line.substr(x + 1, line.length());
 
 		// TEACHER FIRST NAME
+		x = line.find(',');
+		word = line.substr(0, x);
 		current->setTeacherFN(word);
 
 		Time* classTime = current->getClassTimePtr();
