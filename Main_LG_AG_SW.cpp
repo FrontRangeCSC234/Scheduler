@@ -26,7 +26,7 @@ int main( )
 
 	Schedule schedule;
 
-
+	string lookUpRoom;
 
 	while ( userChoice != 0 )
 	{
@@ -81,6 +81,12 @@ int main( )
 			fout << schedule;
 			fout.close( );
 			break;
+		case 9:
+				//Room schedule output
+			cout << "Enter room" << endl;
+			cin >> lookUpRoom;
+			schedule.outputRoom( lookUpRoom );
+			break;
 		case 0:
 			cout << "EXITING PROGRAM!" << endl;
 			break;
@@ -114,6 +120,7 @@ void displayMenu( )
 	cout << "(6) Make Schedule" << endl;
 	cout << "(7) Output Schedule to console" << endl;
 	cout << "(8) Make Schedule file" << endl;
+	cout << "(9) Output a single room schedule" << endl;
 }
 
 

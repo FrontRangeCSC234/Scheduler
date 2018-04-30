@@ -427,6 +427,22 @@ public:
 		return index;
 	}
 
+	//Outputs the schedule of a single room in the schedule array
+	void outputRoom( string rm )
+	{
+		int col = findRoom( rm );
+		string output = rm + ".csv";			//File is named after room
+		ofstream fout;
+		fout.open( output );
+		fout << ',' << rm << endl;				//Name at top of schedule
+		for ( int i = 0; i < 91 && schedule[i][col] != nullptr; i++ )
+		{
+			fout << schedule[i][col]->getCrn( ) << ',' << schedule[i][col]->getTeacherFN( ) << ',' << schedule[i][col]->getTeacherLN( );
+			fout << endl;
+		}
+		fout.close( );
+	}
+
 	/*void outputRoomSchedule( Room toFind )
 	{
 	ofstream fout;
