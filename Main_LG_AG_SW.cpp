@@ -3,89 +3,90 @@ using namespace std;
 
 
 //Prototypes 
-void displayMenu( );
-void createMasterFile( );
+void displayMenu();
+void createMasterFile();
+void searchCRN( Course **courses );
+//void searchForCourse();
+//void searchForRoom();
+//void findAvailableRooms();
+//void addCourse();
 
 
 
 
-int main( )
+
+int main()
 {
 	ofstream fout;
 
 	//Course classArray[750];
 	//courseFileReadIn( classArray );
-	Course ** classArray;
+
+		//SDS: Part of bugfix for array delete function. Makes sure delete won't error
+	Course ** classArray = nullptr;
 
 	string nameArray[RMMAX];
 	Room roomList[RMMAX];
 
 	int userChoice = 1;
 
-	Common commonArray[750]; 
+	Common commonArray[750];
 
 	Schedule schedule;
 
-	string lookUpRoom;
 
-	while ( userChoice != 0 )
+
+	while (userChoice != 0)
 	{
-		displayMenu( );
+		displayMenu();
 		cin >> userChoice;
-		switch ( userChoice )
+		switch (userChoice)
 		{
 		case 1:
-			cout << "case 1" << endl;
-			createMasterFile( );
+			createMasterFile();
 			break;
 		case 2:
-			cout << "case 2" << endl;
-			//searchForCourse( );
-			break;
-		case 3:
-			cout << "case 3" << endl;
-			//searchForRoom( );
-			break;
-		case 4:
-			cout << "case 4" << endl;
-			//findAvailableRooms( );
-			break;
-		case 5:
-			cout << "case 5" << endl;
-			//addCourse( );
-			break;
-		case 6:
 			//callCommon()
 			fillRoomArray(roomList, nameArray);
 
 			//For testing purposes
 			/*for ( int i = 0; i < RMMAX; i++ )
 			{
-				cout << nameArray[i] << endl;
+			cout << nameArray[i] << endl;
 			}*/
 
-			Common::initializeCommonArray( commonArray );
-			Common::fillCommon( commonArray );
+			Common::initializeCommonArray(commonArray);
+			Common::fillCommon(commonArray);
 			//courseFileReadIn( classArray );
-			classArray = coursePointerFill( );
-			schedule.setRoomArray( nameArray );
+			classArray = coursePointerFill();
+			schedule.setRoomArray(nameArray);
 			//schedule.fill( roomList, classArray );
 			//schedule.fillQuicklyOBJArray( classArray );
-			schedule.fillQuicklyPTRArray( classArray );
+			schedule.fillQuicklyPTRArray(classArray);
 			break;
-		case 7:
+		case 3:
+			fout.open("Schedule.csv");
+			fout << schedule;
+			fout.close();
+			break;
+		case 4:
 			cout << schedule;
 			break;
+		case 5:
+			//searchForCourse( );
+			searchCRN( classArray );
+			break;
+		case 6:
+			//searchForRoom( );
+			break;
+		case 7:
+			//findAvailableRooms( );
+			break;
 		case 8:
-			fout.open( "Schedule.csv" );
-			fout << schedule;
-			fout.close( );
+			//addCourse( );
 			break;
 		case 9:
-				//Room schedule output
-			cout << "Enter room" << endl;
-			cin >> lookUpRoom;
-			schedule.outputRoom( lookUpRoom );
+			schedule.outputRoom( );
 			break;
 		case 0:
 			cout << "EXITING PROGRAM!" << endl;
@@ -96,8 +97,8 @@ int main( )
 		}
 	}
 	cout << "Deleting" << endl;
-	deletePointerArray( classArray );
-	system( "pause" );
+	deletePointerArray(classArray);
+	system("pause");
 	return 0;
 }
 
@@ -106,21 +107,19 @@ int main( )
 * Author: Alex Gibson
 * Displays menu
 */
-void displayMenu( )
+void displayMenu()
 {
-
-
 	cout << "What would you like to do?" << endl;
 	cout << "(0) EXIT PROGRAM" << endl;
 	cout << "(1) Create a master file." << endl;
-	cout << "(2) Search for a course." << endl;
-	cout << "(3) Search for a room." << endl;
-	cout << "(4) Find available rooms." << endl;
-	cout << "(5) Add a course." << endl;
-	cout << "(6) Make Schedule" << endl;
-	cout << "(7) Output Schedule to console" << endl;
-	cout << "(8) Make Schedule file" << endl;
-	cout << "(9) Output a single room schedule" << endl;
+	cout << "(2) Make Schedule" << endl;
+	cout << "(3) Make Schedule file" << endl;
+	cout << "(4) Output Schedule to console" << endl;
+	cout << "(5) Search for a course." << endl;
+	cout << "(6) Search for a room." << endl;
+	cout << "(7) Find available rooms." << endl;
+	cout << "(8) Add a course." << endl;
+	cout << "(9) Output single room schedule" << endl;
 }
 
 
@@ -128,61 +127,61 @@ void displayMenu( )
 * Author: Sara Williams
 * reads in master file, and assigns CRNS to any courses without CRNs
 */
-void createMasterFile( )
+void createMasterFile()
 {
 	bool crnArray[6000];	//array of booleans - if true, then CRN is used
 
 	ofstream outFile;
-	outFile.open( "MasterFile.csv", ofstream::out | ofstream::app );
+	outFile.open("MasterFile.csv", ofstream::out | ofstream::app);
 
 	//initialize all values to false
-	for ( int i = 0; i < 6000; i++ )
+	for (int i = 0; i < 6000; i++)
 	{
 		crnArray[i] = false;
 	}
 
-	ifstream infile( "MASTER.csv" );		//opens the file
+	ifstream infile("MASTER.csv");		//opens the file
 	string cell;						//The string to hold each "cell" with data
-	if ( infile.is_open( ) )
+	if (infile.is_open())
 	{
-		getline( infile, cell, '\n' );	//ignore first line (header)
+		getline(infile, cell, '\n');	//ignore first line (header)
 		int i = 0;
-		while ( !infile.fail( ) )	//while file is still open
+		while (!infile.fail())	//while file is still open
 		{
 			int CRN;
 			infile >> CRN;		//grabs CRN
 			CRN = CRN - 60000;
-			if ( CRN > 0 )
+			if (CRN > 0)
 			{
 				//cout << "CRN is: " << CRN << endl;
 				crnArray[CRN] = true;
 			}
 
-			getline( infile, cell, '\n' );
+			getline(infile, cell, '\n');
 		}
 
 		vector <int> unusedCRNArray;
 
 
-		for ( int i = 0; i < 6000; i++ )
+		for (int i = 0; i < 6000; i++)
 		{
-			if ( crnArray[i] == false )
+			if (crnArray[i] == false)
 			{
-				unusedCRNArray.push_back( i + 60000 );
+				unusedCRNArray.push_back(i + 60000);
 				//cout << "Index: " << i << " [" << i+60000 << "]" << endl;
 			}
 		}
 
 
-		ifstream infile( "MASTER.csv" );		//opens the file
+		ifstream infile("MASTER.csv");		//opens the file
 
-		if ( infile.is_open( ) )
+		if (infile.is_open())
 		{
-			getline( infile, cell, '\n' );	//ignore first line (header)
+			getline(infile, cell, '\n');	//ignore first line (header)
 			int i = 0;
-			while ( !infile.fail( ) )	//while file is still open
+			while (!infile.fail())	//while file is still open
 			{
-				if ( cell[0] == ',' )
+				if (cell[0] == ',')
 				{
 					outFile << unusedCRNArray[i] << cell << " \n";
 					i++;
@@ -191,7 +190,7 @@ void createMasterFile( )
 				{
 					outFile << cell << " \n";
 				}
-				getline( infile, cell, '\n' );
+				getline(infile, cell, '\n');
 			}
 
 		}
@@ -200,10 +199,57 @@ void createMasterFile( )
 			cout << "File is not open" << '\n';
 		}
 
-		infile.close( );
-		outFile.close( );
+		infile.close();
+		outFile.close();
 	}
 }
 
+/*************************************************************************
+*	Branson Camp                                                         *
+*	searchCRN                                                            *
+*	Prompts the user to search by crn, then prints info about the course *
+**************************************************************************/
 
+void searchCRN( Course **courseArray )
+{
+	int crnSearch = 0;
+	cout << "Search CRN: ";
+	cin >> crnSearch;
+	crnSearch -= 60000;
+	if ( crnSearch < 0 || crnSearch >= COURSEMAX )
+	{
+		cout << "INVALID CRN" << endl;
+		return;
+	}
+	if ( courseArray[crnSearch] == nullptr )
+	{
+		cout << "Class does not exist" << endl;
+	}
+	else
+	{
+		Course found = *courseArray[crnSearch];
+		// Print out course information
+
+		string fn = found.getTeacherFN( );
+		string ln = found.getTeacherLN( );
+		string teacherName = "";
+		if ( fn == "STAFF" || fn == "STAFF " )
+		{
+			fn = "<UNKNOWN>";
+		}
+		if ( ln == "STAFF" || ln == "STAFF " )
+		{
+			ln = "<UNKNOWN>";
+		}
+
+		cout << endl << "---------------------------------------" << endl;
+		cout << "CRN: " << found.getCrn( ) << endl;
+		cout << "TITLE: " << found.getTitle( ) << endl;
+		cout << "SECTION: " << found.getSection( ) << endl;
+		cout << "ROOM: " << found.getRoomNum( ) << endl;
+		cout << "TEACHER(LN, FN): " << ln << ", " << fn << endl;
+		cout << "---------------------------------------" << endl << endl;
+
+	}
+}
 

@@ -1,26 +1,5 @@
 #pragma once
-//#include "SkelCourse.h"
-//#include "Room.h"
 #include "All_Included_Files.h"
-
-/*****************************
-Documentation:
-
-Necessary variables:
--Way to organize rooms (currently string array of room numbers)
--2D array of CRN's (each column is a room)
--Possibly index array where CRN-60000 stores the objects location in the Course array
-(This is currently in main, but it used both places. As a class, should decide where
-is the best place for it to go)
-Necessary methods:
--Way to add sections and rooms to relevant arrays (either as a single operation, or
-for the entire file; both are presented here, with the entire file method
-currently in use)
--Method for checking a room number against the current array
--Method to tell if a space is empty (currently, array is initialized to all 0's then
-checks for 0's when scheduling)
--Method for outputing schedule, currently outputs arrays using overloaded <<
-*******************************/
 
 const int COURSEMAX = 10000;
 
@@ -398,7 +377,7 @@ public:
 		fout.close( );
 	}
 
-	//Finds an existing index or assigns one to a room, returns the index
+		//Finds an existing index or assigns one to a room, returns the index
 	int findRoomIndex( Room *Room )
 	{
 		int index = 0;
@@ -427,48 +406,98 @@ public:
 		return index;
 	}
 
-	//Outputs the schedule of a single room in the schedule array
-	void outputRoom( string rm )
+		//Prompts user to enter a room number and checks that room is valid, returns room
+	string displayMenu( )
 	{
+		int indexCheck = -1;
+		string toReturn;
+
+		while ( indexCheck == -1 )
+		{
+			cout << "Please enter a room number" << endl;
+			cin >> toReturn;
+
+			for ( int i = 0; i < toReturn.size( ); i++ )
+			{
+				toReturn[i] = toupper( toReturn[i] );		//Prevents capitalization error
+			}
+
+			indexCheck = findRoom( toReturn );				//Checks that room exists
+		}
+		return toReturn;
+	}
+
+		//Outputs the schedule of a single room in the schedule array
+	void outputRoom( )
+	{
+		string rm = displayMenu( );
 		int col = findRoom( rm );
 		string output = rm + ".csv";			//File is named after room
 		ofstream fout;
+
+		int full[7] = { 0 };					//Tracks number of pointers in columns of toOutput
+		Course * toOutput[13][7];				//Stores output courses in correct format
+
+		for ( int i = 0; i < 13; i++ )
+		{
+			for ( int j = 0; j < 7; j++ )
+			{
+				toOutput[i][j] = nullptr;
+			}
+		}
+
 		fout.open( output );
-		fout << ',' << rm << endl;				//Name at top of schedule
+		fout << ",,," << rm << endl;				//Name at top of schedule
+		fout << "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY,SUNDAY" << endl;
 		for ( int i = 0; i < 91 && schedule[i][col] != nullptr; i++ )
 		{
-			fout << schedule[i][col]->getCrn( ) << ',' << schedule[i][col]->getTeacherFN( ) << ',' << schedule[i][col]->getTeacherLN( );
+			fillOutputRoomArray( toOutput, schedule[i][col], full );
+			//Old, working code
+			/*fout << schedule[i][col]->getCrn( ) << ',' << schedule[i][col]->getTeacherFN( ) << ',' << schedule[i][col]->getTeacherLN( );
+			fout << endl;*/
+		}
+		for ( int i = 0; i < 13; i++ )
+		{
+			for ( int j = 0; j < 7; j++ )
+			{
+				if ( toOutput[i][j] != nullptr )
+				{
+					fout << toOutput[i][j]->getCrn( ) << ',';
+				}
+				else
+				{
+					fout << "0,";
+				}
+			}
 			fout << endl;
 		}
 		fout.close( );
 	}
 
-	/*void outputRoomSchedule( Room toFind )
+		//Uses courseWeek array to place courses in columns corresponding to days of the week
+	void fillOutputRoomArray( Course * toOutput[13][7], Course * raw, int fullArray[7] )
 	{
-	ofstream fout;
-	string desiredRoom = toFind.getRoom( );
-	string filename = desiredRoom + ".csv";
-	int loc = findRoomIndex( &toFind );
-	fout.open( filename );
-	for ( int i = 0; i < 91; i++ )
-	{
-	for ( int j = 0; j < 7; j++ )
-	{
-	if ( schedule[i][loc]->checkDays( j ) )
-	{
-	fout << schedule[i][loc]->getCRN( ) << ',';
-	}
-	else
-	{
-	fout << ',';
-	}
-	}
-	fout << endl;
-	}
-	fout.close( );
-	}*/
+		/************************************************************
+		Get's a pointer to the time object's courseWeek array.
 
-	//Outputs entire schedule array in CSV friendly format
+		NOTE: courseWeek is a 2D array: courseWeek[2][7]. The
+		returned pointer treats it as a 1D array with 14 members.
+		The first row [0][0-6] is accessed using indeces 0-6
+		while the second row [1][0-6] is accessed using indeces
+		7-13.
+		**********************************************************/
+		int *time = raw->getClassTimePtr( )->getCourseWeek( );
+		for ( int i = 0; i < 7; i++ )
+		{
+			if ( time[(i)] != -1 )
+			{
+				toOutput[fullArray[i]][i] = raw;
+				fullArray[i]++;
+			}
+		}
+	}
+
+		//Outputs entire schedule array in CSV friendly format
 	friend ostream &operator<< ( ostream &stream, Schedule toOutput )
 	{
 		for ( int i = 0; i < RMMAX; i++ )

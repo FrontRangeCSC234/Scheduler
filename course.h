@@ -1,6 +1,7 @@
 #pragma once
 // MICAH HAAS
 // Edits and additions by Kyle Dickens, 4/27/18 12:46 AM
+// Bug fix by Branson Camp 4/29/18 4:48 PM
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -296,6 +297,8 @@ Course** coursePointerFill()
 		line = line.substr(x + 1, line.length());
 
 		// TEACHER FIRST NAME
+		x = line.find(',');
+		word = line.substr(0, x);
 		current->setTeacherFN(word);
 
 		Time* classTime = current->getClassTimePtr();
@@ -313,11 +316,15 @@ Deletes the pointer array passed into after deleting all of the pointers inside 
 */
 void deletePointerArray(Course* cArray[])
 {
-	for (int i = 0; i < 10000; i++)
+		//SDS: Fixed bug where delete threw error if array not filled
+	if ( cArray != nullptr )			//Check if array filled
 	{
-		if (cArray[i] != nullptr)
+		for ( int i = 0; i < 10000; i++ )
 		{
-			delete cArray[i];
+			if ( cArray[i] != nullptr )
+			{
+				delete cArray[i];
+			}
 		}
 	}
 	delete cArray;
